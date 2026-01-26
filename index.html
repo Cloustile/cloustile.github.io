@@ -1,1714 +1,1380 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>城市归属测试 | 寻找你的理想生活城市</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> 发现属于你的流动的盛宴 </title>
+    
+    <!-- 暗色模式切换图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    
+    <!-- html2canvas 用于截图保存 -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-        }
-        
-        :root {
-            --primary: #3a86ff;
-            --secondary: #8338ec;
-            --accent: #ff006e;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --success: #06d6a0;
-            --warning: #ffd166;
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --border-radius: 16px;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .main-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            padding: 30px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-        }
-        
-        /* 首页样式 */
-        .welcome-screen {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 70vh;
-        }
-        
-        .logo {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: var(--primary);
-            text-shadow: 0 4px 12px rgba(58, 134, 255, 0.2);
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            color: var(--dark);
-            margin-bottom: 15px;
-            font-weight: 700;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--gray);
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-        
-        .highlight {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .start-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 20px;
-            box-shadow: 0 6px 20px rgba(58, 134, 255, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .start-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.4);
-        }
-        
-        /* 进度条样式 */
-        .progress-container {
-            margin-bottom: 30px;
-        }
-        
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-        
-        .progress-bar {
-            height: 8px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        
-        /* 题目样式 */
-        .question-container {
-            display: none;
-        }
-        
-        .question-container.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .question-number {
-            color: var(--primary);
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .question-text {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            line-height: 1.4;
-        }
-        
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-        
-        @media (min-width: 640px) {
-            .options-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        .option-btn {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 18px 20px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .option-btn:hover {
-            border-color: var(--primary);
-            background-color: rgba(58, 134, 255, 0.05);
-            transform: translateY(-2px);
-        }
-        
-        .option-btn.selected {
-            border-color: var(--primary);
-            background-color: rgba(58, 134, 255, 0.1);
-            box-shadow: 0 5px 15px rgba(58, 134, 255, 0.1);
-        }
-        
-        .option-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(58, 134, 255, 0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        
-        .option-btn.selected .option-icon {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-        
-        .nav-btn {
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .prev-btn {
-            background: transparent;
-            border: 2px solid #e9ecef;
-            color: var(--gray);
-        }
-        
-        .prev-btn:hover {
-            border-color: var(--gray);
-        }
-        
-        .next-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
-        }
-        
-        .next-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(58, 134, 255, 0.4);
-        }
-        
-        .next-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        /* 验证界面样式 */
-        .verification-screen {
-            display: none;
-            text-align: center;
-        }
-        
-        .verification-screen.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .lock-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        
-        .verification-title {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-        
-        .verification-text {
-            color: var(--gray);
-            margin-bottom: 30px;
-            max-width: 500px;
-        }
-        
-        .code-input {
-            width: 100%;
-            max-width: 300px;
-            padding: 15px;
-            font-size: 1.2rem;
-            text-align: center;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            letter-spacing: 3px;
-            color: var(--dark);
-            transition: all 0.3s;
-        }
-        
-        .code-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
-        }
-        
-        .verify-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 6px 20px rgba(58, 134, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .verify-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.4);
-        }
-        
-        .error-message {
-            color: var(--accent);
-            margin-top: 15px;
-            font-size: 0.9rem;
-            display: none;
-        }
-        
-        /* 结果界面样式 */
-        .result-screen {
-            display: none;
-        }
-        
-        .result-screen.active {
-            display: block;
-            animation: fadeIn 0.8s ease;
-        }
-        
-        .result-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .result-title {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--dark);
-        }
-        
-        .result-city {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 12px rgba(58, 134, 255, 0.1);
-        }
-        
-        .match-percentage {
-            font-size: 1.1rem;
-            color: var(--gray);
-            margin-bottom: 25px;
-        }
-        
-        .match-percentage .percentage {
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .city-tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        
-        .city-tag {
-            background: rgba(58, 134, 255, 0.1);
-            color: var(--primary);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .chart-container {
-            height: 300px;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        
-        .city-description {
-            background: rgba(248, 249, 250, 0.8);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            line-height: 1.7;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .alternative-cities {
-            margin-bottom: 30px;
-        }
-        
-        .alternative-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--dark);
-        }
-        
-        .alternative-cities-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .alternative-city {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-        
-        .alternative-city:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary);
-        }
-        
-        .alternative-city-name {
-            font-weight: 700;
-            margin-bottom: 5px;
-            color: var(--dark);
-        }
-        
-        .alternative-city-match {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 40px;
-        }
-        
-        .action-btn {
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .restart-btn {
-            background: white;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .restart-btn:hover {
-            background: rgba(58, 134, 255, 0.05);
-        }
-        
-        .share-btn {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
-        }
-        
-        .share-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(58, 134, 255, 0.4);
-        }
-        
-        /* 页脚样式 */
-        .footer {
-            text-align: center;
-            color: var(--gray);
-            font-size: 0.85rem;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            width: 100%;
-        }
-        
-        /* 动画 */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* 加载动画 */
-        .loading-screen {
-            display: none;
-            text-align: center;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            min-height: 60vh;
-        }
-        
-        .loading-screen.active {
-            display: flex;
-        }
-        
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(58, 134, 255, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .main-card {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .result-city {
-                font-size: 2.8rem;
-            }
-            
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
+      /* ================= 变量定义 ================= */
+      :root {
+        --primary: #6366f1;
+        --accent: #ec4899;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-sub: #64748b;
+        --border: #e2e8f0;
+        --shadow: rgba(0, 0, 0, 0.15);
+        --grid-color: #e2e8f0;
+      }
+
+      /* 暗色模式变量 */
+      .dark-mode {
+        --primary: #818cf8;
+        --accent: #f472b6;
+        --bg: #0f172a;
+        --card: #1e293b;
+        --text-main: #f1f5f9;
+        --text-sub: #94a3b8;
+        --border: #334155;
+        --shadow: rgba(0, 0, 0, 0.4);
+        --grid-color: #334155;
+      }
+
+      /* ================= 基础样式 ================= */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-image: 
+          linear-gradient(var(--grid-color) 1px, transparent 1px), 
+          linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+        background-size: 20px 20px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 500px;
+        background: var(--card);
+        padding: 30px;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px var(--shadow);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 95vh;
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+
+      /* ================= 暗色模式切换按钮 ================= */
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s;
+        z-index: 1000;
+      }
+
+      .theme-toggle:hover {
+        transform: rotate(30deg);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+      }
+
+      /* ================= 验证码页面 ================= */
+      #captcha-screen {
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .captcha-input {
+        width: 50%;
+        padding: 15px;
+        font-size: 14px;
+        text-align: center;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin: 20px 0;
+        outline: none;
+        letter-spacing: 5px;
+        color: var(--primary);
+        transition: all 0.3s;
+        background: var(--card);
+        color: var(--text-main);
+      }
+
+      .captcha-input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+      }
+
+      .captcha-btn {
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        font-size: 16px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        transition: transform 0.2s;
+      }
+
+      .captcha-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* ================= 头部区域 ================= */
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+
+      .header h1 {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text-main);
+        margin: 0 0 5px 0;
+      }
+
+      .header p {
+        color: var(--text-sub);
+        font-size: 13px;
+        margin: 0;
+      }
+
+      /* ================= 进度条 ================= */
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin-bottom: 20px;
+        flex-shrink: 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      /* ================= 问题区域 ================= */
+      #quiz-container {
+        overflow-y: auto;
+        flex-grow: 1;
+        padding-bottom: 10px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      #quiz-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .question-card {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .question-card.active {
+        display: block;
+      }
+
+      .question-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 25px 0 30px 0;
+        line-height: 1.4;
+        color: var(--text-main);
+      }
+
+      /* ================= 选项 ================= */
+      .options-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .option-btn {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 14px 16px;
+        border-radius: 12px;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        color: var(--text-main);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .option-btn:hover {
+        border-color: var(--primary);
+        background-color: rgba(99, 102, 241, 0.1);
+      }
+
+      .option-btn.selected {
+        border-color: var(--primary);
+        background-color: rgba(99, 102, 241, 0.15);
+        color: var(--primary);
+        font-weight: 600;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+      }
+
+      /* ================= 导航按钮 ================= */
+      .action-bar {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .nav-btn {
+        border: none;
+        background: none;
+        color: var(--text-sub);
+        font-size: 14px;
+        cursor: pointer;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+
+      .nav-btn:hover {
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--text-main);
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .confirm-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+        display: none;
+      }
+
+      .confirm-btn:active {
+        transform: scale(0.98);
+      }
+
+      /* ================= 结果页面 ================= */
+      #result-screen {
+        display: none;
+        text-align: center;
+        overflow-y: auto;
+        max-height: 100%;
+        padding-right: 5px;
+      }
+
+      .result-city-name {
+        font-size: 48px;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 5px 0 10px;
+        letter-spacing: 2px;
+      }
+
+      .result-tag-cloud {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      .result-tag {
+        background: rgba(148, 163, 184, 0.1);
+        color: var(--text-sub);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid var(--border);
+      }
+
+      .chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+        margin: 10px 0 20px 0;
+        display: block;
+      }
+
+      .result-desc {
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text-sub);
+        background: rgba(148, 163, 184, 0.05);
+        padding: 15px;
+        border-radius: 16px;
+        text-align: left;
+        margin-bottom: 20px;
+        border: 1px solid var(--border);
+      }
+
+      .plan-b {
+        background: var(--card);
+        border: 1px dashed var(--border);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .city-link-btn {
+        display: inline-block;
+        margin: 5px;
+        padding: 6px 12px;
+        background-color: rgba(148, 163, 184, 0.1);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text-sub);
+        font-weight: 600;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+      }
+
+      .city-link-btn:hover {
+        background-color: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .city-link-btn.active {
+        background-color: var(--primary);
+        color: white;
+        box-shadow: 0 2px 5px rgba(99, 102, 241, 0.3);
+      }
+
+      /* ================= 结果页面按钮 ================= */
+      .result-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .result-btn {
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .result-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .result-btn.save {
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        color: white;
+        border: none;
+      }
+
+      .result-btn.restart {
+        background: rgba(148, 163, 184, 0.1);
+      }
+
+      /* ================= 加载动画 ================= */
+      #loading {
+        display: none;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ================= 版权信息 ================= */
+      .copyright-footer {
+        position: fixed;
+        bottom: 5px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        background-color: var(--bg);
+        font-size: 10px;
+        color: var(--text-sub);
+        line-height: 1.4;
+        z-index: 9999;
+        user-select: none;
+        -webkit-user-select: none;
+        transition: background-color 0.3s, color 0.3s;
+      }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 欢迎界面 -->
-        <div class="main-card welcome-screen" id="welcomeScreen">
-            <div class="logo">
-                <i class="fas fa-city"></i>
-            </div>
-            <h1>城市归属测试</h1>
-            <p class="subtitle">通过25道精心设计的题目，分析你的生活方式、价值观和性格特点，为你匹配最适合居住的中国城市。</p>
-            <p class="subtitle">测试基于6个维度：<span class="highlight">经济活力</span>、<span class="highlight">生活节奏</span>、<span class="highlight">自然环境</span>、<span class="highlight">文化氛围</span>、<span class="highlight">生活成本</span>和<span class="highlight">社交友好度</span>。</p>
-            <button class="start-btn" id="startBtn">
-                <i class="fas fa-play-circle"></i> 开始测试
-            </button>
-            <div class="footer">
-                <p>本测试仅供娱乐参考，结果基于算法分析生成</p>
-            </div>
+    <!-- 暗色模式切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- 验证码页面 -->
+    <div class="container" id="captcha-screen">
+        <div style="font-size: 50px; margin-bottom: 10px">✈️ </div>
+        <div class="header">
+            <h1>开启旅程</h1>
+            <p>灵魂，大地上的异乡者</p>
         </div>
-        
-        <!-- 测试界面 -->
-        <div class="main-card question-screen" id="questionScreen" style="display: none;">
-            <div class="progress-container">
-                <div class="progress-info">
-                    <span id="currentQuestion">1</span> / <span id="totalQuestions">25</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-            </div>
-            
-            <div id="questionContainer">
-                <!-- 题目将通过JS动态插入 -->
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="nav-btn prev-btn" id="prevBtn">
-                    <i class="fas fa-arrow-left"></i> 上一题
-                </button>
-                <button class="nav-btn next-btn" id="nextBtn" disabled>
-                    下一题 <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
+        <input type="tel" id="captcha-input" class="captcha-input" placeholder="请输入验证码" maxlength="4" />
+        <button class="captcha-btn" onclick="verifyCaptcha()">解锁报告</button>
+        <div id="error-msg" style="color: #ef4444; font-size: 13px; margin-top: 15px; display: none">验证码错误，请重试</div>
+    </div>
+
+    <!-- 主测试页面 -->
+    <div class="container" id="quiz-app" style="display: none">
+        <div class="header">
+            <h1>发现属于你的流动的盛宴</h1>
+            <p>每一位大地上的异乡者，都会有独属的灵魂栖居之所</p>
         </div>
-        
-        <!-- 加载界面 -->
-        <div class="main-card loading-screen" id="loadingScreen">
-            <div class="loader"></div>
-            <h3>正在分析你的答案...</h3>
-            <p>正在为你匹配最适合的城市</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
         </div>
-        
-        <!-- 验证界面 -->
-        <div class="main-card verification-screen" id="verificationScreen">
-            <div class="lock-icon">
-                <i class="fas fa-lock"></i>
-            </div>
-            <h2 class="verification-title">报告已生成</h2>
-            <p class="verification-text">请输入访问码查看你的个性化城市匹配报告</p>
-            <input type="text" class="code-input" id="codeInput" placeholder="请输入访问码" maxlength="6">
-            <button class="verify-btn" id="verifyBtn">解锁报告</button>
-            <div class="error-message" id="errorMessage">
-                <i class="fas fa-exclamation-circle"></i> 访问码错误，请重新输入
-            </div>
-            <div class="footer" style="margin-top: 30px;">
-                <p>提示：访问码为 <strong>test01</strong></p>
-            </div>
+
+        <div id="quiz-container"></div>
+
+        <div id="loading" style="display: none; text-align: center; padding: 40px">
+            <div class="loading-spinner"></div>
+            <div style="margin-top: 15px; color: var(--text-sub)">正在发现你的灵魂栖居所</div>
         </div>
-        
-        <!-- 结果界面 -->
-        <div class="main-card result-screen" id="resultScreen">
-            <div class="result-header">
-                <h2 class="result-title">你的理想城市是</h2>
-                <div class="result-city" id="resultCityName">--</div>
-                <div class="match-percentage">
-                    匹配度：<span class="percentage" id="matchPercentage">--%</span>
-                </div>
-                <div class="city-tags" id="cityTags">
-                    <!-- 城市标签将通过JS动态插入 -->
-                </div>
-            </div>
-            
+
+        <div id="result-screen">
+            <div style="font-size: 40px"></div>
+            <div style="font-size: 13px; color: var(--text-sub); margin-top: 5px">你的灵魂栖居在</div>
+
+            <div class="result-city-name" id="city-name">--</div>
+            <div class="result-tag-cloud" id="city-tags"></div>
+
             <div class="chart-container">
                 <canvas id="radarChart"></canvas>
             </div>
-            
-            <div class="city-description" id="cityDescription">
-                <!-- 城市描述将通过JS动态插入 -->
-            </div>
-            
-            <div class="alternative-cities">
-                <h3 class="alternative-title">其他匹配城市</h3>
-                <div class="alternative-cities-container" id="alternativeCities">
-                    <!-- 备选城市将通过JS动态插入 -->
+
+            <div class="result-desc" id="city-desc"></div>
+
+            <div class="plan-b">
+                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px; font-weight: 700">
+                    📋 其他匹配城市（点击切换）
                 </div>
+                <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 5px"></div>
             </div>
-            
-            <div class="action-buttons">
-                <button class="action-btn restart-btn" id="restartBtn">
-                    <i class="fas fa-redo"></i> 重新测试
+
+            <!-- 结果页面按钮 -->
+            <div class="result-actions">
+                <button class="result-btn save" onclick="saveResultAsImage()">
+                    <i class="fas fa-camera"></i> 保存结果
                 </button>
-                <button class="action-btn share-btn" id="shareBtn">
-                    <i class="fas fa-share-alt"></i> 分享结果
+                <button class="result-btn restart" onclick="restartTest()">
+                    <i class="fas fa-redo"></i> 重新测试
                 </button>
             </div>
         </div>
+
+        <div class="action-bar" id="action-bar" style="display: none">
+            <button class="nav-btn" id="prev-btn" onclick="prevStep()">← 上一题</button>
+            <button class="confirm-btn" id="confirm-btn" onclick="confirmMultiSelection()">确认选择</button>
+        </div>
+    </div>
+
+    <div class="copyright-footer">
+        该测试由Data Mining Lab提供 • 结果仅供参考<br />
     </div>
 
     <script>
-        // 城市数据库
-        // 城市数据库 (38个城市)
-const cities = [
-    {
-        name: "大理",
-        tags: ["风花雪月", "文艺青年", "慢生活"],
-        scores: { economy: 3, pace: 10, environment: 10, culture: 8, cost: 8, social: 6 },
-        description: "大理是文艺青年的圣地，以苍山洱海的自然风光和悠闲的生活节奏闻名。这里适合追求精神自由、向往田园牧歌式生活的人群，是逃离都市喧嚣的理想之地。",
-        icon: "🏔️"
-    },
-    {
-        name: "成都",
-        tags: ["美食之都", "休闲安逸", "熊猫故乡"],
-        scores: { economy: 8, pace: 9, environment: 7, culture: 9, cost: 7, social: 10 },
-        description: "成都以其悠闲的生活节奏、丰富的美食文化和友善包容的社交氛围著称。这里既有现代化的都市便利，又有浓厚的本地文化特色，是追求生活品质与工作平衡的理想城市。",
-        icon: "🐼"
-    },
-    {
-        name: "上海",
-        tags: ["国际都会", "金融中心", "时尚前沿"],
-        scores: { economy: 10, pace: 6, environment: 5, culture: 9, cost: 2, social: 7 },
-        description: "上海是中国最具国际化的都市，经济活力强劲，文化多元。这里拥有丰富的工作机会和现代化的生活方式，适合追求事业发展、喜爱都市繁华的精英人群。",
-        icon: "🏙️"
-    },
-    {
-        name: "重庆",
-        tags: ["山城", "火锅之都", "魔幻地形"],
-        scores: { economy: 7, pace: 7, environment: 6, culture: 8, cost: 8, social: 9 },
-        description: "重庆以其独特的山城地貌、麻辣火锅和魔幻的都市景观著称。这里生活气息浓厚，物价相对合理，适合喜欢热闹、追求生活趣味的人群。",
-        icon: "🌶️"
-    },
-    {
-        name: "杭州",
-        tags: ["数字之都", "西湖美景", "创业热土"],
-        scores: { economy: 9, pace: 7, environment: 8, culture: 8, cost: 5, social: 7 },
-        description: "杭州完美结合了现代科技与自然美景，既有发达的互联网产业，又有西湖等优美的自然环境。这里生活节奏适中，创新氛围浓厚，适合追求工作与生活平衡的科技从业者。",
-        icon: "🌳"
-    },
-    {
-        name: "北京",
-        tags: ["首都", "文化中心", "政治中心"],
-        scores: { economy: 10, pace: 4, environment: 4, culture: 10, cost: 3, social: 6 },
-        description: "北京作为中国首都，集中了政治、文化、教育资源。这里机遇与挑战并存，生活节奏快，竞争激烈，适合有抱负、追求事业发展的人群。",
-        icon: "🏯"
-    },
-    {
-        name: "深圳",
-        tags: ["科技创新", "年轻活力", "移民城市"],
-        scores: { economy: 10, pace: 5, environment: 7, culture: 6, cost: 3, social: 8 },
-        description: "深圳是中国最具创新力和活力的城市，吸引了大量年轻人和创业者。这里工作机会多，发展空间大，城市现代化程度高，适合有抱负、追求事业发展的年轻人。",
-        icon: "💻"
-    },
-    {
-        name: "西安",
-        tags: ["十三朝古都", "历史文化", "碳水之都"],
-        scores: { economy: 6, pace: 7, environment: 6, culture: 10, cost: 8, social: 8 },
-        description: "西安是中国历史文化名城，拥有深厚的历史底蕴和丰富的文化遗产。这里生活成本相对较低，美食众多，社交氛围友好，适合对历史文化感兴趣的人群。",
-        icon: "🗿"
-    },
-    {
-        name: "广州",
-        tags: ["美食天堂", "商贸中心", "务实低调"],
-        scores: { economy: 9, pace: 7, environment: 6, culture: 8, cost: 6, social: 8 },
-        description: "广州是中国南方重要的商贸中心，以丰富的美食文化和务实低调的城市性格著称。这里生活气息浓厚，商业机会多，适合追求事业发展与生活享受的人群。",
-        icon: "🥟"
-    },
-    {
-        name: "长沙",
-        tags: ["娱乐之都", "湘菜美食", "活力之城"],
-        scores: { economy: 7, pace: 8, environment: 6, culture: 8, cost: 8, social: 9 },
-        description: "长沙以其丰富的娱乐产业和美食文化闻名。这里夜生活丰富多彩，消费水平适中，适合追求娱乐生活和社交活动的年轻人。",
-        icon: "🎭"
-    },
-    {
-        name: "丽江",
-        tags: ["古城韵味", "纳西文化", "旅游胜地"],
-        scores: { economy: 4, pace: 9, environment: 9, culture: 8, cost: 6, social: 6 },
-        description: "丽江以保存完好的古城和纳西族文化闻名，是著名的旅游目的地。这里生活节奏缓慢，自然风光优美，适合追求宁静生活、喜爱古建筑和文化体验的人群。",
-        icon: "🏮"
-    },
-    {
-        name: "三亚",
-        tags: ["热带海滨", "度假天堂", "养老胜地"],
-        scores: { economy: 5, pace: 9, environment: 10, culture: 5, cost: 4, social: 6 },
-        description: "三亚是中国著名的热带海滨旅游城市，拥有优质的海滩和温暖的气候。这里适合度假、养老和享受慢生活，是追求阳光沙滩人群的理想选择。",
-        icon: "🏖️"
-    },
-    {
-        name: "青岛",
-        tags: ["海滨城市", "啤酒之都", "红瓦绿树"],
-        scores: { economy: 7, pace: 7, environment: 9, culture: 7, cost: 7, social: 8 },
-        description: "青岛以其优美的海滨风光、宜人的气候和独特的欧式建筑闻名。这里生活节奏适中，海鲜美食丰富，适合喜欢海滨生活、注重生活环境的人群。",
-        icon: "🍺"
-    },
-    {
-        name: "厦门",
-        tags: ["海上花园", "文艺清新", "宜居城市"],
-        scores: { economy: 6, pace: 8, environment: 9, culture: 8, cost: 5, social: 7 },
-        description: "厦门是一座美丽的海滨城市，以其文艺清新的氛围和优美的自然环境吸引着许多人。这里生活节奏适中，城市整洁干净，适合喜欢海边生活、追求生活品质的人群。",
-        icon: "🌊"
-    },
-    {
-        name: "苏州",
-        tags: ["园林之城", "江南水乡", "经济发达"],
-        scores: { economy: 8, pace: 7, environment: 8, culture: 9, cost: 6, social: 7 },
-        description: "苏州完美融合了古典园林的韵味与现代经济的活力。这里生活节奏适中，文化氛围浓厚，经济发展水平高，适合追求文化品位与经济发展平衡的人群。",
-        icon: "🎋"
-    },
-    {
-        name: "南京",
-        tags: ["六朝古都", "文化名城", "教育重镇"],
-        scores: { economy: 7, pace: 6, environment: 7, culture: 9, cost: 6, social: 7 },
-        description: "南京是中国著名的历史文化名城，拥有丰富的历史遗迹和深厚的文化底蕴。这里高校云集，教育资源丰富，适合注重文化教育和历史氛围的人群。",
-        icon: "📚"
-    },
-    {
-        name: "武汉",
-        tags: ["江城", "九省通衢", "高校云集"],
-        scores: { economy: 7, pace: 7, environment: 6, culture: 8, cost: 7, social: 8 },
-        description: "武汉位于中国中部，是重要的交通枢纽和教育中心。这里高校众多，生活节奏适中，既有历史文化底蕴，又有现代都市活力。",
-        icon: "🌸"
-    },
-    {
-        name: "拉萨",
-        tags: ["日光城", "藏传佛教", "心灵净土"],
-        scores: { economy: 3, pace: 9, environment: 9, culture: 9, cost: 7, social: 5 },
-        description: "拉萨是西藏自治区的首府，以藏传佛教文化和独特的高原风光闻名。这里生活节奏缓慢，宗教氛围浓厚，适合寻求心灵宁静和精神探索的人群。",
-        icon: "🙏"
-    },
-    {
-        name: "泉州",
-        tags: ["海上丝绸之路", "多元宗教", "民营经济"],
-        scores: { economy: 7, pace: 7, environment: 6, culture: 9, cost: 8, social: 7 },
-        description: "泉州是海上丝绸之路的起点，拥有丰富的多元宗教文化和繁荣的民营经济。这里文化底蕴深厚，生活成本适中，适合对历史文化感兴趣的商业人士。",
-        icon: "⛩️"
-    },
-    {
-        name: "阿那亚",
-        tags: ["海滨社区", "文艺生活", "理想社区"],
-        scores: { economy: 5, pace: 9, environment: 9, culture: 8, cost: 4, social: 7 },
-        description: "阿那亚是近年来兴起的高端海滨社区，以其独特的建筑设计和文艺生活方式吸引着许多人。这里环境优美，社区文化浓厚，适合追求高品质生活和精神享受的人群。",
-        icon: "🎨"
-    },
-    {
-        name: "天津",
-        tags: ["港口城市", "相声艺术", "欧式风情"],
-        scores: { economy: 7, pace: 7, environment: 6, culture: 8, cost: 7, social: 8 },
-        description: "天津是中国北方重要的港口城市，拥有独特的欧式建筑和相声文化。这里生活节奏相对舒缓，消费水平适中，适合喜欢多元文化融合的人群。",
-        icon: "🎭"
-    },
-    {
-        name: "香港",
-        tags: ["国际金融中心", "购物天堂", "中西合璧"],
-        scores: { economy: 10, pace: 4, environment: 6, culture: 9, cost: 1, social: 6 },
-        description: "香港是世界著名的国际金融中心和购物天堂，中西文化在这里完美融合。这里生活节奏快，竞争激烈，但机会众多，适合追求事业发展、喜爱国际化都市生活的人群。",
-        icon: "🌃"
-    },
-    {
-        name: "台北",
-        tags: ["宝岛之都", "夜市文化", "人文气息"],
-        scores: { economy: 6, pace: 8, environment: 7, culture: 9, cost: 5, social: 8 },
-        description: "台北是台湾的政治、经济和文化中心，以其丰富的夜市文化和浓厚的人文气息著称。这里生活便利，文化多元，适合追求生活品质和文化体验的人群。",
-        icon: "🍜"
-    },
-    {
-        name: "景德镇",
-        tags: ["瓷都", "陶瓷文化", "手工艺"],
-        scores: { economy: 4, pace: 8, environment: 7, culture: 9, cost: 8, social: 6 },
-        description: "景德镇以陶瓷闻名于世，是中国著名的\"瓷都\"。这里陶瓷文化底蕴深厚，生活节奏缓慢，适合对传统手工艺和文化创意产业感兴趣的人群。",
-        icon: "🏺"
-    },
-    {
-        name: "阿勒泰",
-        tags: ["北疆风光", "冰雪世界", "自然原始"],
-        scores: { economy: 3, pace: 9, environment: 10, culture: 6, cost: 8, social: 5 },
-        description: "阿勒泰位于新疆北部，以其壮丽的自然风光和冬季的冰雪世界闻名。这里自然环境原始，人口稀少，适合喜爱户外活动、追求自然体验的人群。",
-        icon: "❄️"
-    },
-    {
-        name: "万宁",
-        tags: ["冲浪胜地", "热带风光", "休闲度假"],
-        scores: { economy: 4, pace: 9, environment: 9, culture: 5, cost: 7, social: 6 },
-        description: "万宁是海南的冲浪胜地，拥有优质的海浪和热带风光。这里生活节奏悠闲，适合喜欢水上运动、追求休闲度假生活的人群。",
-        icon: "🏄"
-    },
-    {
-        name: "扬州",
-        tags: ["园林城市", "淮扬菜", "文化古城"],
-        scores: { economy: 5, pace: 8, environment: 8, culture: 9, cost: 7, social: 7 },
-        description: "扬州是著名的历史文化名城，以其精致的园林和淮扬菜闻名。这里生活节奏舒缓，文化底蕴深厚，适合追求慢生活和精致文化体验的人群。",
-        icon: "🍵"
-    },
-    {
-        name: "敦煌",
-        tags: ["丝绸之路", "莫高窟", "沙漠绿洲"],
-        scores: { economy: 3, pace: 8, environment: 7, culture: 10, cost: 8, social: 5 },
-        description: "敦煌以莫高窟和丝绸之路文化遗产闻名于世。这里文化底蕴极其深厚，自然环境独特，适合对历史文化、考古研究感兴趣的人群。",
-        icon: "🐫"
-    },
-    {
-        name: "哈尔滨",
-        tags: ["冰城", "俄式风情", "冰雪节"],
-        scores: { economy: 5, pace: 7, environment: 6, culture: 8, cost: 8, social: 8 },
-        description: "哈尔滨以其独特的俄式建筑和冬季的冰雪节闻名。这里冬季寒冷漫长，夏季凉爽宜人，适合喜爱冰雪文化和异域风情的人群。",
-        icon: "🏰"
-    },
-    {
-        name: "昆明",
-        tags: ["春城", "四季如春", "鲜花之都"],
-        scores: { economy: 5, pace: 9, environment: 10, culture: 7, cost: 7, social: 7 },
-        description: "昆明以\"春城\"著称，气候宜人，四季如春。这里生活节奏缓慢，自然环境优美，生活成本相对较低，适合追求舒适生活、注重气候和环境的人群。",
-        icon: "🌺"
-    },
-    {
-        name: "威海",
-        tags: ["海滨城市", "干净整洁", "宜居小城"],
-        scores: { economy: 4, pace: 9, environment: 9, culture: 6, cost: 8, social: 7 },
-        description: "威海是中国北方著名的海滨城市，以其干净整洁的城市环境和宜人的气候著称。这里生活节奏悠闲，适合追求宁静生活、注重环境质量的人群。",
-        icon: "🌅"
-    },
-    {
-        name: "澳门",
-        tags: ["赌城", "中西文化", "美食之都"],
-        scores: { economy: 8, pace: 7, environment: 6, culture: 9, cost: 4, social: 7 },
-        description: "澳门是世界著名的赌城，中西文化在这里交融。这里娱乐业发达，美食丰富，适合追求娱乐生活和独特文化体验的人群。",
-        icon: "🎰"
-    },
-    {
-        name: "呼伦贝尔",
-        tags: ["草原风光", "蒙古文化", "自然辽阔"],
-        scores: { economy: 3, pace: 9, environment: 10, culture: 7, cost: 8, social: 6 },
-        description: "呼伦贝尔以其辽阔的草原风光和蒙古族文化闻名。这里自然环境原始，人口稀少，适合喜爱大自然、追求心灵自由的人群。",
-        icon: "🌾"
-    },
-    {
-        name: "洛阳",
-        tags: ["十三朝古都", "牡丹花城", "历史文化"],
-        scores: { economy: 5, pace: 7, environment: 6, culture: 9, cost: 8, social: 7 },
-        description: "洛阳是中国著名的历史文化名城，十三朝古都，以牡丹花闻名。这里文化底蕴深厚，生活成本较低，适合对历史文化和传统艺术感兴趣的人群。",
-        icon: "🌺"
-    },
-    {
-        name: "佛山",
-        tags: ["制造业强", "功夫之乡", "美食丰富"],
-        scores: { economy: 8, pace: 7, environment: 6, culture: 7, cost: 8, social: 7 },
-        description: "佛山是广东重要的制造业基地，以功夫文化和美食闻名。这里工业基础雄厚，生活成本相对较低，适合追求事业发展机会的人群。",
-        icon: "🥋"
-    },
-    {
-        name: "大连",
-        tags: ["北方明珠", "海滨城市", "足球之城"],
-        scores: { economy: 7, pace: 7, environment: 9, culture: 7, cost: 6, social: 8 },
-        description: "大连是中国北方著名的海滨城市，以其优美的海岸线和宜人的气候著称。这里生活节奏适中，适合喜欢海滨生活和北方气候的人群。",
-        icon: "⚽"
-    },
-    {
-        name: "沈阳",
-        tags: ["工业重镇", "历史文化", "东北中心"],
-        scores: { economy: 6, pace: 7, environment: 5, culture: 8, cost: 9, social: 8 },
-        description: "沈阳是东北地区的重要工业城市，拥有丰富的历史文化遗产。这里生活成本较低，冬季寒冷，但夏季凉爽，适合适应寒冷气候的人群。",
-        icon: "🏭"
-    },
-    {
-        name: "桂林",
-        tags: ["山水甲天下", "喀斯特地貌", "旅游名城"],
-        scores: { economy: 4, pace: 8, environment: 10, culture: 7, cost: 7, social: 7 },
-        description: "桂林以其\"山水甲天下\"的喀斯特地貌风光闻名。这里自然环境优美，生活节奏悠闲，适合追求自然风光和宁静生活的人群。",
-        icon: "⛰️"
-    }
-];
+        // ================= 全局变量 =================
+        const correctCaptcha = "0000"; // 验证码
+        let chartInstance = null;
+        let currentStep = 0;
+        let selectionHistory = [];
+
+        // ================= 暗色模式切换 =================
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
         
-        // 测试题目
+        // 检查本地存储的主题偏好
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // ================= 1. 验证码功能 =================
+        document.getElementById("captcha-input").addEventListener("keypress", function (e) {
+            if (e.key === "Enter") verifyCaptcha();
+        });
+
+        function verifyCaptcha() {
+            const input = document.getElementById("captcha-input");
+            const errorMsg = document.getElementById("error-msg");
+            
+            if (input.value.trim() === correctCaptcha) {
+                document.getElementById("captcha-screen").style.display = "none";
+                document.getElementById("quiz-app").style.display = "flex";
+                initQuiz();
+            } else {
+                errorMsg.style.display = "block";
+                input.style.borderColor = "#ef4444";
+                input.value = "";
+                input.focus();
+            }
+        }
+
+        // ================= 2. 城市数据库 =================
+        const cities = [
+            {
+                name: "大理",
+                tags: { sea: -1, chill: 10, lowHousePrice: 8, warm: 8, nature: 10, slow: 10, edu: 2, medical: 2, romantic: 9 },
+                displayTags: ["风花雪月", "慢生活", "文艺青年"],
+                desc: "你是追求精神自由的旅人。大理的苍山洱海、古城石板路和文艺气息，是逃离都市喧嚣的理想之地。这里适合数字游民、自由职业者，或者渴望在自然中寻找自我的你。",
+            },
+            {
+                name: "成都",
+                tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 6, spicy: 10, ent: 10, edu: 8, medical: 9, food: 10 },
+                displayTags: ["天府之国", "美食之都", "巴适生活"],
+                desc: "你懂得享受生活，追求工作与生活的平衡。成都有顶级医疗资源（华西医院）、丰富的美食和悠闲的生活节奏。这里包容开放，既有发展机会，也有打麻将喝茶的闲适。",
+            },
+            {
+                name: "上海",
+                tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
+                displayTags: ["国际魔都", "精致生活", "机遇之城"],
+                desc: "你追求卓越，向往国际化、精致的生活方式。上海有最前沿的时尚、最多的职业机会和顶级的医疗教育资源。这里竞争激烈但回报丰厚，适合有野心的奋斗者。",
+            },
+            {
+                name: "重庆",
+                tags: { sea: -1, chill: 7, lowHousePrice: 8, warm: 8, spicy: 10, mountains: 10, edu: 7, medical: 8, nightLife: 9 },
+                displayTags: ["山城", "火锅之都", "8D魔幻"],
+                desc: "你性格直爽，喜欢有特色的城市景观和热辣的生活。重庆的立体交通、夜景和火锅文化独具魅力。这里人热情豪爽，生活成本相对较低，适合喜欢烟火气的你。",
+            },
+            {
+                name: "杭州",
+                tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
+                displayTags: ["电商之都", "西湖美景", "数字之城"],
+                desc: "你既想追求事业成功，又向往诗意生活。杭州是互联网和电商中心，同时拥有西湖美景和江南韵味。这里适合希望在科技行业发展的文艺青年。",
+            },
+            {
+                name: "北京",
+                tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
+                displayTags: ["首都", "文化中心", "资源高地"],
+                desc: "你追求顶级资源和宏大平台，能够承受快节奏和高压力。北京有最好的教育、医疗和文化资源，适合有雄心壮志、想在体制内或大平台发展的你。",
+            },
+            {
+                name: "深圳",
+                tags: { sea: 1, chill: 2, lowHousePrice: -8, warm: 9, tech: 10, hustle: 10, edu: 7, medical: 8, young: 10 },
+                displayTags: ["创新之都", "青春之城", "搞钱第一"],
+                desc: "你是充满活力的奋斗者，追求效率、创新和高收入。深圳年轻、开放、充满机会，适合想在科技、金融领域快速发展的年轻人。",
+            },
+            {
+                name: "西安",
+                tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 5, history: 10, heavyFood: 9, edu: 9, medical: 8, culture: 9 },
+                displayTags: ["古都", "碳水天堂", "文化底蕴"],
+                desc: "你热爱历史和文化，喜欢有厚重感的城市。西安有深厚的历史底蕴、丰富的美食和相对较低的生活成本，适合喜欢传统文化又希望有现代便利的你。",
+            },
+            {
+                name: "广州",
+                tags: { sea: -1, chill: 6, lowHousePrice: -3, warm: 9, lightFood: 10, trade: 10, edu: 9, medical: 9, pragmatic: 10 },
+                displayTags: ["美食天堂", "务实之城", "商贸之都"],
+                desc: "你务实低调，注重生活品质和美食体验。广州生活气息浓厚，医疗教育资源优秀，房价相对一线城市更友好，适合追求性价比的务实派。",
+            },
+            {
+                name: "长沙",
+                tags: { sea: -1, chill: 8, lowHousePrice: 8, warm: 7, spicy: 9, ent: 10, edu: 8, medical: 8, nightLife: 10 },
+                displayTags: ["娱乐之都", "房价洼地", "不夜城"],
+                desc: "你热爱生活，喜欢热闹和娱乐。长沙房价友好、夜生活丰富、美食多样，适合追求快乐生活、不想被房贷压垮的年轻人。",
+            },
+            {
+                name: "丽江",
+                tags: { sea: -1, chill: 10, lowHousePrice: 7, warm: 7, nature: 10, romantic: 10, edu: 2, medical: 3, slow: 10 },
+                displayTags: ["古城韵味", "艳遇之都", "慢时光"],
+                desc: "你向往诗和远方，渴望逃离都市的喧嚣。丽江的古城、雪山和慢节奏生活，是文艺青年和追求心灵自由者的理想之地。",
+            },
+            {
+                name: "三亚",
+                tags: { sea: 10, chill: 9, lowHousePrice: -5, warm: 10, nature: 9, tourism: 10, edu: 4, medical: 5, vacation: 10 },
+                displayTags: ["热带天堂", "度假胜地", "海滨生活"],
+                desc: "你热爱阳光、沙滩和大海，追求度假般的生活。三亚有中国最美的海滩和温暖的气候，适合喜欢水上运动、追求休闲生活的人。",
+            },
+            {
+                name: "青岛",
+                tags: { sea: 9, chill: 7, lowHousePrice: 4, warm: 6, beer: 10, nature: 8, edu: 7, medical: 7, european: 8 },
+                displayTags: ["红瓦绿树", "啤酒之城", "海滨风情"],
+                desc: "你喜欢有特色的海滨城市，享受啤酒、海鲜和欧式建筑。青岛气候宜人，生活节奏适中，适合喜欢海洋文化又希望有城市便利的你。",
+            },
+            {
+                name: "厦门",
+                tags: { sea: 9, chill: 8, lowHousePrice: -6, warm: 9, romantic: 10, clean: 10, edu: 8, medical: 7, island: 10 },
+                displayTags: ["海上花园", "文艺清新", "慢生活"],
+                desc: "你追求浪漫、精致的生活环境。厦门有美丽的海岸线、文艺的鼓浪屿和干净的城市环境，适合喜欢小资情调、注重生活品质的你。",
+            },
+            {
+                name: "苏州",
+                tags: { sea: -1, chill: 7, lowHousePrice: -2, warm: 7, garden: 10, manu: 9, edu: 8, medical: 7, culture: 9 },
+                displayTags: ["园林之城", "江南水乡", "工业强市"],
+                desc: "你欣赏古典美，又重视现代产业发展。苏州完美融合了古典园林和现代工业园区，既有文化底蕴又有经济活力，适合追求平衡发展的你。",
+            },
+            {
+                name: "南京",
+                tags: { sea: -1, chill: 6, lowHousePrice: -1, warm: 7, history: 9, edu: 10, medical: 9, culture: 9, stable: 8 },
+                displayTags: ["六朝古都", "教育重镇", "文化名城"],
+                desc: "你重视教育和文化，喜欢有历史底蕴的城市。南京高校云集，医疗资源优秀，生活节奏适中，适合重视子女教育和个人发展的家庭。",
+            },
+            {
+                name: "武汉",
+                tags: { sea: -1, chill: 5, lowHousePrice: 6, warm: 8, heavyFood: 9, river: 10, edu: 9, medical: 9, hub: 10 },
+                displayTags: ["江城", "过早之都", "九省通衢"],
+                desc: "你性格豪爽，喜欢大江大河的气势。武汉地理位置优越，医疗教育资源强大，生活成本适中，适合喜欢热闹、追求便利交通的你。",
+            },
+            {
+                name: "泉州",
+                tags: { sea: 1, chill: 7, lowHousePrice: 7, warm: 9, history: 9, business: 8, edu: 6, medical: 6, culture: 9 },
+                displayTags: ["海上丝绸之路", "闽南文化", "民营经济"],
+                desc: "你喜欢有独特文化底蕴的沿海城市。泉州是海上丝绸之路起点，闽南文化浓郁，民营经济活跃，适合喜欢历史文化又希望有商业机会的你。",
+            },
+            {
+                name: "香港",
+                tags: { sea: 1, chill: 2, lowHousePrice: -10, warm: 9, finance: 10, foreign: 10, edu: 10, medical: 10, hustle: 10 },
+                displayTags: ["国际都会", "购物天堂", "金融中心"],
+                desc: "你追求国际化、高效率的生活，能够承受高压力和高成本。香港是亚洲金融中心，中西文化交融，适合追求顶尖职业发展和国际视野的你。",
+            },
+            {
+                name: "台北",
+                tags: { sea: -1, chill: 7, lowHousePrice: -5, warm: 9, food: 10, culture: 9, edu: 9, medical: 9, friendly: 9 },
+                displayTags: ["美食之都", "文化多元", "人情味浓"],
+                desc: "你注重生活细节，喜欢多元文化和美食。台北以丰富的小吃、便捷的生活和浓厚的人情味著称，适合追求生活品质和文化体验的你。",
+            },
+            {
+                name: "扬州",
+                tags: { sea: -1, chill: 8, lowHousePrice: 6, warm: 7, garden: 9, food: 9, edu: 6, medical: 6, slow: 9 },
+                displayTags: ["淮扬菜", "园林城市", "慢生活"],
+                desc: "你喜欢精致、悠闲的生活方式。扬州以淮扬菜、古典园林和慢节奏生活闻名，适合追求生活情趣、喜欢江南文化的你。",
+            },
+            {
+                name: "哈尔滨",
+                tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 2, cold: 10, heavyFood: 9, edu: 8, medical: 8, european: 9 },
+                displayTags: ["冰城", "欧式风情", "豪爽热情"],
+                desc: "你喜欢鲜明的四季和异域风情，不怕寒冷。哈尔滨有独特的冰雪文化、俄式建筑和豪爽的民风，适合喜欢冬季运动和特色文化的你。",
+            },
+            {
+                name: "昆明",
+                tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 8, seasons: 10, nature: 9, edu: 7, medical: 7, flowers: 10 },
+                displayTags: ["春城", "鲜花之都", "气候宜人"],
+                desc: "你追求舒适的气候和自然环境。昆明四季如春，鲜花常开，生活节奏悠闲，适合厌倦极端天气、想要舒适生活的你。",
+            },
+            {
+                name: "威海",
+                tags: { sea: 10, chill: 9, lowHousePrice: 6, warm: 7, clean: 10, nature: 9, edu: 5, medical: 6, slow: 9 },
+                displayTags: ["最宜居", "干净城市", "海滨慢生活"],
+                desc: "你追求干净、安静的海滨生活。威海以洁净的环境、优美的海岸线和慢节奏生活闻名，适合喜欢海洋、追求宜居环境的你。",
+            },
+            {
+                name: "澳门",
+                tags: { sea: 1, chill: 6, lowHousePrice: -8, warm: 9, gaming: 10, portuguese: 10, edu: 7, medical: 8, blend: 10 },
+                displayTags: ["中西合璧", "娱乐之都", "文化遗产"],
+                desc: "你喜欢中西文化交融的独特氛围。澳门有丰富的葡萄牙文化遗产、繁华的娱乐业和独特的美食，适合喜欢多元文化、追求独特体验的你。",
+            },
+            {
+                name: "大连",
+                tags: { sea: 9, chill: 7, lowHousePrice: 5, warm: 6, clean: 9, japanese: 8, edu: 8, medical: 8, football: 9 },
+                displayTags: ["北方明珠", "足球之城", "海滨浪漫"],
+                desc: "你喜欢北方海滨城市的清爽和浪漫。大连气候宜人，城市干净，有浓厚的足球文化和日俄建筑遗产，适合喜欢海洋运动的北方人。",
+            },
+            {
+                name: "珠海",
+                tags: { sea: 10, chill: 9, lowHousePrice: -2, warm: 9, clean: 10, garden: 9, edu: 6, medical: 6, romantic: 9 },
+                displayTags: ["百岛之市", "宜居城市", "情侣路"],
+                desc: "你追求浪漫、干净的海滨生活环境。珠海以优美的海岸线、花园般的城市和悠闲的生活节奏著称，适合喜欢海洋、追求生活品质的你。",
+            },
+            {
+                name: "无锡",
+                tags: { sea: -1, chill: 7, lowHousePrice: 4, warm: 7, garden: 9, industry: 8, edu: 7, medical: 7, taihu: 10 },
+                displayTags: ["太湖明珠", "工业强市", "江南水乡"],
+                desc: "你喜欢江南水乡的韵味和现代工业的结合。无锡有美丽的太湖风光、发达的民营经济和适中的生活成本，适合追求平衡发展的江南爱好者。",
+            },
+        ];
+
+        // ================= 3. 问卷配置 =================
         const questions = [
             {
-                id: 1,
-                text: "你理想中的周末是如何度过的？",
+                title: "1/20 你的饮食偏好是？",
                 options: [
-                    { text: "探索城市新开的餐厅和咖啡馆", scores: { social: 2, culture: 1 } },
-                    { text: "在家休息、追剧或阅读", scores: { pace: 2 } },
-                    { text: "参加朋友聚会或社交活动", scores: { social: 2 } },
-                    { text: "去郊外或公园享受大自然", scores: { environment: 2 } },
-                    { text: "学习新技能或处理工作", scores: { economy: 2 } }
-                ]
+                    { text: "🌶️ 无辣不欢，川湘渝菜系最爱", tags: { spicy: 10, food: 8 } },
+                    { text: "🍜 喜欢面食和北方菜系", tags: { heavyFood: 10, food: 8 } },
+                    { text: "🥟 偏爱清淡鲜甜的粤菜江浙菜", tags: { lightFood: 10, food: 8 } },
+                    { text: "🍲 什么都吃，喜欢尝试各地美食", tags: { food: 9, pragmatic: 8 } },
+                    { text: "🥗 健康饮食，沙拉轻食为主", tags: { foreign: 8, food: 6 } },
+                ],
             },
             {
-                id: 2,
-                text: "你对工作与生活的平衡如何看待？",
+                title: "2/20 你对气候的偏好是？",
                 options: [
-                    { text: "工作第一，事业成功最重要", scores: { economy: 2, pace: -1 } },
-                    { text: "生活更重要，工作只是手段", scores: { pace: 2, economy: -1 } },
-                    { text: "两者需要完美平衡", scores: { pace: 1, economy: 1 } },
-                    { text: "更倾向于自由职业或灵活工作", scores: { pace: 2, economy: -1 } }
-                ]
+                    { text: "☀️ 喜欢温暖，讨厌冬天", tags: { warm: 10 } },
+                    { text: "❄️ 喜欢四季分明，享受季节变化", tags: { seasons: 10 } },
+                    { text: "🌤️ 温和宜人，不要极端天气", tags: { seasons: 8, warm: 6 } },
+                    { text: "🏖️ 热带气候，常年夏天", tags: { warm: 10, sea: 5 } },
+                    { text: "🌨️ 不怕冷，喜欢雪景", tags: { cold: 10 } },
+                ],
             },
             {
-                id: 3,
-                text: "你更喜欢哪种气候？",
+                title: "3/20 你理想的城市景观是？",
                 options: [
-                    { text: "四季分明，体验不同季节", scores: { environment: 1 } },
-                    { text: "温暖湿润，冬天不太冷", scores: { environment: 2 } },
-                    { text: "干燥凉爽，夏天不太热", scores: { environment: 2 } },
-                    { text: "四季如春，温度适宜", scores: { environment: 2 } }
-                ]
+                    { text: "🏙️ 现代摩天大楼，都市感强", tags: { modern: 10, hustle: 6 } },
+                    { text: "⛰️ 自然风光，山水湖海", tags: { nature: 10, chill: 6 } },
+                    { text: "🏯 历史古迹，文化底蕴深厚", tags: { history: 10, culture: 8 } },
+                    { text: "🌊 海滨城市，有沙滩海岸", tags: { sea: 10, romantic: 8 } },
+                    { text: "🏡 安静小镇，田园风光", tags: { slow: 10, chill: 8 } },
+                ],
             },
             {
-                id: 4,
-                text: "你如何看待城市的消费水平？",
+                title: "4/20 你的期望薪资水平是？",
                 options: [
-                    { text: "高消费水平意味着更多机会和便利", scores: { economy: 2, cost: -2 } },
-                    { text: "中等消费水平，性价比最重要", scores: { cost: 1, economy: 1 } },
-                    { text: "低消费水平，节省开支更重要", scores: { cost: 2, economy: -1 } },
-                    { text: "不太在意，收入能覆盖即可", scores: { cost: 0 } }
-                ]
+                    { text: "💰 追求高薪，不怕加班", tags: { hustle: 10, highSalary: 10 } },
+                    { text: "⚖️ 中等偏上，工作生活平衡", tags: { hustle: 5, chill: 6 } },
+                    { text: "💼 稳定即可，更看重其他方面", tags: { stable: 10, hustle: 3 } },
+                    { text: "🆓 自由职业，收入不稳定但自由", tags: { chill: 10, hustle: 2 } },
+                ],
             },
             {
-                id: 5,
-                text: "你对城市文化氛围的偏好是？",
+                title: "5/20 你的职业方向是？",
                 options: [
-                    { text: "现代时尚，充满创新活力", scores: { culture: 1, economy: 1 } },
-                    { text: "历史厚重，传统底蕴深厚", scores: { culture: 2 } },
-                    { text: "多元融合，包容各种文化", scores: { culture: 2, social: 1 } },
-                    { text: "文艺清新，适合创作思考", scores: { culture: 2 } }
-                ]
+                    { text: "💻 互联网/科技行业", tags: { tech: 10, hustle: 8 } },
+                    { text: "🏛️ 体制内/公务员", tags: { gov: 10, stable: 10 } },
+                    { text: "💰 金融/商业", tags: { finance: 10, hustle: 8 } },
+                    { text: "🎨 创意/文化/艺术", tags: { culture: 10, ent: 8 } },
+                    { text: "🏭 制造业/实体经济", tags: { manu: 10, stable: 8 } },
+                    { text: "🆓 自由职业/创业", tags: { business: 10, chill: 8 } },
+                ],
             },
             {
-                id: 6,
-                text: "你希望居住在怎样的社区环境中？",
+                title: "6/20 你对房价的态度是？",
                 options: [
-                    { text: "繁华市中心，交通便利", scores: { economy: 1, pace: -1 } },
-                    { text: "安静郊区，环境优美", scores: { environment: 2, pace: 1 } },
-                    { text: "大学附近，文化氛围浓厚", scores: { culture: 2, social: 1 } },
-                    { text: "新兴开发区，发展潜力大", scores: { economy: 2 } }
-                ]
+                    { text: "🏠 必须买房，愿意承受高房价", tags: { lowHousePrice: -10, stable: 8 } },
+                    { text: "🏡 希望买房，但价格要合理", tags: { lowHousePrice: 5, stable: 6 } },
+                    { text: "🏘️ 租房也可，不被房贷束缚", tags: { chill: 8, lowHousePrice: 0 } },
+                    { text: "💰 房价越低越好，生活成本最重要", tags: { lowHousePrice: 10, pragmatic: 8 } },
+                ],
             },
             {
-                id: 7,
-                text: "你交朋友的方式通常是？",
+                title: "7/20 你的业余爱好主要是？",
                 options: [
-                    { text: "通过工作或业务往来", scores: { economy: 1, social: 1 } },
-                    { text: "参加兴趣小组或社团", scores: { social: 2, culture: 1 } },
-                    { text: "邻居或社区活动", scores: { social: 2 } },
-                    { text: "线上社交，线下见面", scores: { social: 1 } },
-                    { text: "朋友介绍，小圈子社交", scores: { social: 1 } }
-                ]
+                    { text: "⛰️ 户外运动，爬山徒步", tags: { nature: 10, chill: 6 } },
+                    { text: "🎭 文化艺术，看展演出", tags: { culture: 10, ent: 8 } },
+                    { text: "🍽️ 美食探店，享受生活", tags: { food: 10, chill: 6 } },
+                    { text: "🏋️ 健身运动，保持健康", tags: { health: 10 } },
+                    { text: "🎮 宅家娱乐，游戏追剧", tags: { chill: 8, ent: 6 } },
+                ],
             },
             {
-                id: 8,
-                text: "你对城市公共交通的期望是？",
+                title: "8/20 你的社交偏好是？",
                 options: [
-                    { text: "地铁网络发达，覆盖全城", scores: { economy: 1 } },
-                    { text: "公交系统完善，票价低廉", scores: { cost: 1 } },
-                    { text: "共享单车和步行友好", scores: { environment: 1, pace: 1 } },
-                    { text: "出租车和网约车方便快捷", scores: { economy: 1 } }
-                ]
+                    { text: "🤝 喜欢社交，朋友越多越好", tags: { humanTouch: 10, ent: 8 } },
+                    { text: "🙅 注重边界，需要个人空间", tags: { boundaries: 10, chill: 6 } },
+                    { text: "👥 有小圈子，深度交往", tags: { culture: 8, humanTouch: 6 } },
+                    { text: "💼 工作社交为主，公私分明", tags: { efficiency: 10, boundaries: 6 } },
+                ],
             },
             {
-                id: 9,
-                text: "你更看重城市的哪个方面？",
+                title: "9/20 你对子女教育的重视程度？",
                 options: [
-                    { text: "经济发展和就业机会", scores: { economy: 2 } },
-                    { text: "生活成本和房价水平", scores: { cost: 2 } },
-                    { text: "自然环境和空气质量", scores: { environment: 2 } },
-                    { text: "文化娱乐和休闲设施", scores: { culture: 2 } },
-                    { text: "社交氛围和人际关系", scores: { social: 2 } }
-                ]
+                    { text: "🎓 非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
+                    { text: "📚 比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
+                    { text: "👶 顺其自然，健康快乐更重要", tags: { edu: 4, chill: 8 } },
+                    { text: "🚫 丁克或不考虑此问题", tags: { chill: 10, edu: 0 } },
+                ],
             },
             {
-                id: 10,
-                text: "你理想的通勤时间是多久？",
+                title: "10/20 你对医疗条件的要求是？",
                 options: [
-                    { text: "15分钟以内，越近越好", scores: { pace: 2 } },
-                    { text: "30分钟左右，可以接受", scores: { pace: 1 } },
-                    { text: "45分钟以内，有补偿就行", scores: { pace: 0 } },
-                    { text: "1小时以内，利用通勤时间学习", scores: { pace: -1 } }
-                ]
+                    { text: "🏥 必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
+                    { text: "⚕️ 有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
+                    { text: "💊 基本医疗能满足就行", tags: { medical: 4, chill: 6 } },
+                    { text: "💪 年轻健康，不太关注", tags: { medical: 2, chill: 8 } },
+                ],
             },
             {
-                id: 11,
-                text: "你如何看待城市的人口规模？",
+                title: "11/20 你的人生追求主要是？",
                 options: [
-                    { text: "超大城市，机会多资源丰富", scores: { economy: 2, social: 1 } },
-                    { text: "大城市，平衡机会与舒适", scores: { economy: 1, pace: 1 } },
-                    { text: "中等城市，生活舒适压力小", scores: { pace: 2, cost: 1 } },
-                    { text: "小城市，宁静安逸", scores: { pace: 2, environment: 1 } }
-                ]
+                    { text: "🚀 事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
+                    { text: "😌 生活幸福，家庭和睦", tags: { stable: 10, chill: 8 } },
+                    { text: "🌍 体验世界，自由探索", tags: { chill: 10, foreign: 8 } },
+                    { text: "🎨 精神满足，追求艺术文化", tags: { culture: 10, ent: 8 } },
+                ],
             },
             {
-                id: 12,
-                text: "你平时的娱乐活动主要是？",
+                title: "12/20 你能接受的通勤时间是？",
                 options: [
-                    { text: "逛街购物，体验新潮事物", scores: { economy: 1, culture: 1 } },
-                    { text: "看电影、演出或展览", scores: { culture: 2 } },
-                    { text: "户外运动或亲近自然", scores: { environment: 2 } },
-                    { text: "朋友聚会，吃饭聊天", scores: { social: 2 } },
-                    { text: "在家享受个人时光", scores: { pace: 1 } }
-                ]
+                    { text: "🚇 30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
+                    { text: "🚗 1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
+                    { text: "🚲 越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
+                    { text: "⏰ 不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
+                ],
             },
             {
-                id: 13,
-                text: "你对美食的偏好是？",
+                title: "13/20 你的周末通常如何安排？",
                 options: [
-                    { text: "本地特色，地道风味", scores: { culture: 1 } },
-                    { text: "多元选择，各国美食", scores: { culture: 1, social: 1 } },
-                    { text: "健康有机，注重食材", scores: { environment: 1 } },
-                    { text: "快捷方便，节省时间", scores: { pace: 1 } },
-                    { text: "无所谓，能吃饱就行", scores: { cost: 1 } }
-                ]
+                    { text: "🛌 休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
+                    { text: "🎉 朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
+                    { text: "📖 学习充电，提升自我", tags: { hustle: 8, culture: 6 } },
+                    { text: "🚗 周边旅行，探索新地方", tags: { nature: 8, chill: 6 } },
+                ],
             },
             {
-                id: 14,
-                text: "你如何看待城市的夜生活？",
+                title: "14/20 你对城市规模的偏好是？",
                 options: [
-                    { text: "丰富多彩，越夜越精彩", scores: { social: 2, culture: 1 } },
-                    { text: "适度就好，偶尔参与", scores: { social: 1 } },
-                    { text: "不太需要，早睡早起", scores: { pace: 1 } },
-                    { text: "完全不需要，安静最重要", scores: { pace: 2, environment: 1 } }
-                ]
+                    { text: "🏙️ 超大城市，资源丰富", tags: { hustle: 10, modern: 8 } },
+                    { text: "🏢 一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
+                    { text: "🏘️ 中小城市，生活舒适", tags: { chill: 10, slow: 8 } },
+                    { text: "🏡 小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
+                ],
             },
             {
-                id: 15,
-                text: "你对未来5年的职业规划是？",
+                title: "15/20 你的消费观念是？",
                 options: [
-                    { text: "快速晋升，达到管理层", scores: { economy: 2, pace: -1 } },
-                    { text: "稳定发展，逐步提升", scores: { economy: 1, pace: 0 } },
-                    { text: "转换赛道，尝试新领域", scores: { economy: 1, culture: 1 } },
-                    { text: "工作生活平衡，不追求晋升", scores: { pace: 2, economy: -1 } },
-                    { text: "创业或自由职业", scores: { economy: 1, pace: 1 } }
-                ]
+                    { text: "💸 注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
+                    { text: "💰 理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
+                    { text: "🛒 节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
+                    { text: "🎁 及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
+                ],
             },
             {
-                id: 16,
-                text: "你希望居住城市有怎样的自然环境？",
+                title: "16/20 你对夜生活的需求是？",
                 options: [
-                    { text: "海滨城市，有沙滩和大海", scores: { environment: 2 } },
-                    { text: "山水相间，有山有水", scores: { environment: 2 } },
-                    { text: "公园众多，绿化良好", scores: { environment: 1 } },
-                    { text: "城市整洁，干净卫生", scores: { environment: 1 } },
-                    { text: "不太在意，室内环境更重要", scores: { environment: -1 } }
-                ]
+                    { text: "🌃 丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
+                    { text: "🍸 偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
+                    { text: "🏮 基本没有，早睡早起", tags: { chill: 8, nightLife: -5 } },
+                    { text: "🎶 看心情，有选择地参与", tags: { pragmatic: 8, ent: 5 } },
+                ],
             },
             {
-                id: 17,
-                text: "你更倾向于哪种购物方式？",
+                title: "17/20 你喜欢的居住区域是？",
                 options: [
-                    { text: "大型购物中心，一站式解决", scores: { economy: 1 } },
-                    { text: "特色商业街，有独特店铺", scores: { culture: 1 } },
-                    { text: "社区小店，方便亲切", scores: { social: 1, pace: 1 } },
-                    { text: "线上购物，送货上门", scores: { pace: 1 } }
-                ]
+                    { text: "🏙️ 市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
+                    { text: "🏡 近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
+                    { text: "🌊 海边湖边，风景优美", tags: { sea: 10, nature: 8 } },
+                    { text: "🏯 老城区，有文化氛围", tags: { history: 10, culture: 8 } },
+                ],
             },
             {
-                id: 18,
-                text: "你对城市安全性的要求是？",
+                title: "18/20 你的旅行偏好是？",
                 options: [
-                    { text: "非常重要，安全第一", scores: { pace: 1 } },
-                    { text: "比较重要，但不会过度担心", scores: { pace: 0 } },
-                    { text: "一般，相信大多数城市都安全", scores: { pace: 0 } },
-                    { text: "不太在意，自己注意就好", scores: { pace: 0 } }
-                ]
+                    { text: "✈️ 国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
+                    { text: "🚗 国内深度游，探索各地", tags: { nature: 8, culture: 8 } },
+                    { text: "🏖️ 度假放松，享受酒店服务", tags: { chill: 10, sea: 6 } },
+                    { text: "🚶 城市漫步，感受当地生活", tags: { culture: 10, chill: 6 } },
+                ],
             },
             {
-                id: 19,
-                text: "你如何看待城市的国际化程度？",
+                title: "19/20 你对宠物/植物的态度是？",
                 options: [
-                    { text: "高度国际化，接触多元文化", scores: { culture: 2, economy: 1 } },
-                    { text: "适度国际化，有外国元素", scores: { culture: 1 } },
-                    { text: "本土特色更重要", scores: { culture: 1 } },
-                    { text: "无所谓，不影响生活", scores: { culture: 0 } }
-                ]
+                    { text: "🐶 养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
+                    { text: "🌿 喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
+                    { text: "🏡 有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
+                    { text: "🏢 公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
+                ],
             },
             {
-                id: 20,
-                text: "你希望如何度过假期？",
+                title: "20/20 你希望未来的生活状态是？",
                 options: [
-                    { text: "在城市内探索新去处", scores: { culture: 1, social: 1 } },
-                    { text: "去其他城市或国家旅行", scores: { culture: 1, economy: 1 } },
-                    { text: "回老家陪伴家人", scores: { social: 2 } },
-                    { text: "宅在家里彻底放松", scores: { pace: 2 } },
-                    { text: "参加课程或培训提升自己", scores: { economy: 1 } }
-                ]
+                    { text: "🚀 持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
+                    { text: "⚖️ 工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
+                    { text: "🌿 回归自然，简单生活", tags: { chill: 10, nature: 8 } },
+                    { text: "🎨 自由创作，精神富足", tags: { culture: 10, chill: 8 } },
+                    { text: "👨‍👩‍👧 家庭幸福，温馨美满", tags: { stable: 10, humanTouch: 8 } },
+                ],
             },
-            {
-                id: 21,
-                text: "你对医疗资源的需求是？",
-                options: [
-                    { text: "顶尖医疗资源，三甲医院多", scores: { economy: 1 } },
-                    { text: "基础医疗完善，方便就医", scores: { pace: 1 } },
-                    { text: "社区医疗便利，小病不出社区", scores: { pace: 1 } },
-                    { text: "不太在意，身体健康最重要", scores: { pace: 0 } }
-                ]
-            },
-            {
-                id: 22,
-                text: "你更喜欢哪种建筑风格？",
-                options: [
-                    { text: "现代摩天大楼，都市感强", scores: { economy: 1, culture: 0 } },
-                    { text: "历史建筑，有文化韵味", scores: { culture: 2 } },
-                    { text: "欧式风格，浪漫精致", scores: { culture: 1 } },
-                    { text: "自然融合，绿色建筑", scores: { environment: 2 } },
-                    { text: "无所谓，实用最重要", scores: { cost: 1 } }
-                ]
-            },
-            {
-                id: 23,
-                text: "你对教育的需求是？",
-                options: [
-                    { text: "顶尖教育资源，学区房重要", scores: { economy: 1, cost: -1 } },
-                    { text: "良好教育环境，不追求顶尖", scores: { economy: 0 } },
-                    { text: "国际教育选择多", scores: { culture: 1, economy: 1 } },
-                    { text: "目前不需要考虑", scores: { cost: 1 } }
-                ]
-            },
-            {
-                id: 24,
-                text: "你如何看待城市的创新能力？",
-                options: [
-                    { text: "非常重要，城市活力的体现", scores: { economy: 2, culture: 1 } },
-                    { text: "比较重要，但不唯一", scores: { economy: 1 } },
-                    { text: "一般，更关注生活实际", scores: { pace: 1 } },
-                    { text: "不太在意", scores: { pace: 0 } }
-                ]
-            },
-            {
-                id: 25,
-                text: "你选择城市时最看重的因素是？",
-                options: [
-                    { text: "职业发展机会", scores: { economy: 2 } },
-                    { text: "生活成本和房价", scores: { cost: 2 } },
-                    { text: "自然环境和气候", scores: { environment: 2 } },
-                    { text: "文化氛围和娱乐", scores: { culture: 2 } },
-                    { text: "社交圈子和人际关系", scores: { social: 2 } },
-                    { text: "生活节奏和压力", scores: { pace: 2 } }
-                ]
-            }
         ];
-        
-        // 应用状态
-        const appState = {
-            currentQuestionIndex: 0,
-            userAnswers: [],
-            userScores: { economy: 0, pace: 0, environment: 0, culture: 0, cost: 0, social: 0 },
-            radarChart: null
+
+        // ================= 4. 测试逻辑 =================
+        function initQuiz() {
+            currentStep = 0;
+            selectionHistory = new Array(questions.length).fill(null);
+            renderQuestion(0);
+            updateProgress();
+            updateNavigation();
+        }
+
+        function renderQuestion(index) {
+            const container = document.getElementById("quiz-container");
+            container.innerHTML = "";
+            
+            const q = questions[index];
+            const card = document.createElement("div");
+            card.className = "question-card active";
+            card.innerHTML = `<div class="question-title">${q.title}</div>`;
+            
+            const optionsDiv = document.createElement("div");
+            optionsDiv.className = "options-grid";
+            
+            q.options.forEach((opt, optIndex) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = opt.text;
+                
+                // 添加图标
+                const iconSpan = document.createElement("span");
+                iconSpan.className = "option-icon";
+                iconSpan.textContent = getIconForOption(optIndex);
+                btn.prepend(iconSpan);
+                
+                btn.onclick = () => {
+                    // 移除其他选项的选中状态
+                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    // 选中当前选项
+                    btn.classList.add('selected');
+                    
+                    selectionHistory[index] = [opt.tags];
+                    setTimeout(() => nextStep(), 300);
+                };
+                
+                optionsDiv.appendChild(btn);
+            });
+            
+            card.appendChild(optionsDiv);
+            container.appendChild(card);
+            updateNavigation();
+        }
+
+        function getIconForOption(index) {
+            const icons = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣"];
+            return icons[index] || "⚪";
+        }
+
+        function nextStep() {
+            if (currentStep < questions.length - 1) {
+                currentStep++;
+                updateProgress();
+                renderQuestion(currentStep);
+            } else {
+                calculateResult();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateProgress();
+                renderQuestion(currentStep);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / questions.length) * 100;
+            document.getElementById("progress").style.width = `${progress}%`;
+        }
+
+        function updateNavigation() {
+            const bar = document.getElementById("action-bar");
+            const prevBtn = document.getElementById("prev-btn");
+            
+            bar.style.display = "flex";
+            prevBtn.disabled = currentStep === 0;
+        }
+
+        // ================= 5. 匹配算法 =================
+        function calculateCityScores(userTags) {
+            let candidates = JSON.parse(JSON.stringify(cities));
+            
+            // 计算每个城市的匹配分数
+            candidates.forEach(city => {
+                let score = 0;
+                for (const [tag, weight] of Object.entries(userTags)) {
+                    const cityVal = city.tags[tag] || 0;
+                    score += cityVal * weight;
+                }
+                city.matchScore = score;
+            });
+            
+            // 按分数排序
+            candidates.sort((a, b) => b.matchScore - a.matchScore);
+            
+            // 计算显示分数（百分比）
+            const topScore = candidates[0].matchScore;
+            candidates.forEach(city => {
+                city.displayScore = Math.round((city.matchScore / (topScore || 1)) * 95) + 4;
+            });
+            
+            return candidates;
+        }
+
+        // ================= 6. 雷达图系统 =================
+        const DIMENSIONS = {
+            career: { label: "职业发展", tags: ["hustle", "tech", "finance", "business", "highSalary"] },
+            life: { label: "节奏舒缓", tags: ["chill", "slow", "humanTouch", "stable"] },
+            culture: { label: "文化开放", tags: ["culture", "foreign", "fashion", "ent", "nightLife"] },
+            nature: { label: "自然环境", tags: ["nature", "sea", "warm", "seasons", "clean"] },
+            cost: { label: "生活成本", tags: ["lowHousePrice", "pragmatic"] },
+            facility: { label: "城市配套", tags: ["edu", "medical", "modern", "efficiency"] },
         };
-        
-        // DOM元素
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const questionScreen = document.getElementById('questionScreen');
-        const loadingScreen = document.getElementById('loadingScreen');
-        const verificationScreen = document.getElementById('verificationScreen');
-        const resultScreen = document.getElementById('resultScreen');
-        const startBtn = document.getElementById('startBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const questionContainer = document.getElementById('questionContainer');
-        const progressFill = document.getElementById('progressFill');
-        const currentQuestionEl = document.getElementById('currentQuestion');
-        const totalQuestionsEl = document.getElementById('totalQuestions');
-        const verifyBtn = document.getElementById('verifyBtn');
-        const codeInput = document.getElementById('codeInput');
-        const errorMessage = document.getElementById('errorMessage');
-        const restartBtn = document.getElementById('restartBtn');
-        const shareBtn = document.getElementById('shareBtn');
-        
-        // 初始化
-        function init() {
-            totalQuestionsEl.textContent = questions.length;
-            
-            // 事件监听
-            startBtn.addEventListener('click', startTest);
-            prevBtn.addEventListener('click', showPreviousQuestion);
-            nextBtn.addEventListener('click', showNextQuestion);
-            verifyBtn.addEventListener('click', verifyCode);
-            restartBtn.addEventListener('click', restartTest);
-            shareBtn.addEventListener('click', shareResult);
-            
-            // 验证码输入框回车事件
-            codeInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    verifyCode();
-                }
-            });
-        }
-        
-        // 开始测试
-        function startTest() {
-            welcomeScreen.style.display = 'none';
-            questionScreen.style.display = 'block';
-            loadQuestion(0);
-        }
-        
-        // 加载问题
-        function loadQuestion(index) {
-            appState.currentQuestionIndex = index;
-            const question = questions[index];
-            
-            // 更新进度
-            currentQuestionEl.textContent = index + 1;
-            const progress = ((index + 1) / questions.length) * 100;
-            progressFill.style.width = `${progress}%`;
-            
-            // 更新按钮状态
-            prevBtn.style.display = index === 0 ? 'none' : 'flex';
-            nextBtn.disabled = !appState.userAnswers[index];
-            
-            // 生成题目HTML
-            let optionsHtml = '';
-            question.options.forEach((option, optionIndex) => {
-                const isSelected = appState.userAnswers[index] === optionIndex;
-                optionsHtml += `
-                    <button class="option-btn ${isSelected ? 'selected' : ''}" data-index="${optionIndex}">
-                        <div class="option-icon">
-                            ${String.fromCharCode(65 + optionIndex)}
-                        </div>
-                        <div>${option.text}</div>
-                    </button>
-                `;
-            });
-            
-            questionContainer.innerHTML = `
-                <div class="question-container active">
-                    <div class="question-number">第 ${index + 1} 题</div>
-                    <div class="question-text">${question.text}</div>
-                    <div class="options-grid">${optionsHtml}</div>
-                </div>
-            `;
-            
-            // 为选项添加点击事件
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const optionIndex = parseInt(this.getAttribute('data-index'));
-                    selectOption(index, optionIndex);
-                });
-            });
-        }
-        
-        // 选择选项
-        function selectOption(questionIndex, optionIndex) {
-            appState.userAnswers[questionIndex] = optionIndex;
-            
-            // 更新用户分数
-            const question = questions[questionIndex];
-            const selectedOption = question.options[optionIndex];
-            
-            // 重置该问题的分数
-            Object.keys(appState.userScores).forEach(key => {
-                // 查找之前是否有选择，如果有则减去之前的分数
-                if (appState.userAnswers[questionIndex] !== undefined) {
-                    const prevOptionIndex = appState.userAnswers[questionIndex];
-                    const prevOption = question.options[prevOptionIndex];
-                    if (prevOption.scores[key]) {
-                        appState.userScores[key] -= prevOption.scores[key];
+
+        function calculateSixDimensions(sourceData, isUser) {
+            const scores = [];
+            Object.keys(DIMENSIONS).forEach((dimKey) => {
+                const config = DIMENSIONS[dimKey];
+                let rawSum = 0;
+
+                config.tags.forEach((tag) => {
+                    const val = sourceData[tag] || 0;
+                    if (isUser) {
+                        if (val > 0) rawSum += val *0.8;
+                    } else {
+                        if (val > 0) rawSum += val * 3;
+                        if (val < 0) rawSum -= Math.abs(val) * 2;
                     }
-                }
-            });
-            
-            // 添加新选择的分数
-            Object.keys(selectedOption.scores).forEach(key => {
-                appState.userScores[key] += selectedOption.scores[key];
-            });
-            
-            // 更新UI
-            const optionButtons = document.querySelectorAll('.option-btn');
-            optionButtons.forEach(btn => btn.classList.remove('selected'));
-            optionButtons[optionIndex].classList.add('selected');
-            
-            // 启用下一题按钮
-            nextBtn.disabled = false;
-        }
-        
-        // 显示上一题
-        function showPreviousQuestion() {
-            if (appState.currentQuestionIndex > 0) {
-                loadQuestion(appState.currentQuestionIndex - 1);
-            }
-        }
-        
-        // 显示下一题
-        function showNextQuestion() {
-            if (appState.currentQuestionIndex < questions.length - 1) {
-                loadQuestion(appState.currentQuestionIndex + 1);
-            } else {
-                // 完成所有题目，显示验证界面
-                questionScreen.style.display = 'none';
-                loadingScreen.classList.add('active');
-                
-                // 模拟加载过程
-                setTimeout(() => {
-                    loadingScreen.classList.remove('active');
-                    verificationScreen.classList.add('active');
-                }, 1500);
-            }
-        }
-        
-        // 验证访问码
-        function verifyCode() {
-            const code = codeInput.value.trim();
-            
-            if (code === 'test01') {
-                errorMessage.style.display = 'none';
-                verificationScreen.classList.remove('active');
-                showResult();
-            } else {
-                errorMessage.style.display = 'block';
-                codeInput.style.borderColor = '#ff006e';
-            }
-        }
-        
-        // 显示结果
-        function showResult() {
-            // 计算匹配的城市
-            const matchedCity = calculateMatchedCity();
-            
-            // 更新结果界面
-            document.getElementById('resultCityName').textContent = matchedCity.name;
-            document.getElementById('matchPercentage').textContent = `${matchedCity.matchPercentage}%`;
-            
-            // 添加城市标签
-            const cityTagsContainer = document.getElementById('cityTags');
-            cityTagsContainer.innerHTML = '';
-            matchedCity.tags.forEach(tag => {
-                const tagEl = document.createElement('div');
-                tagEl.className = 'city-tag';
-                tagEl.textContent = tag;
-                cityTagsContainer.appendChild(tagEl);
-            });
-            
-            // 添加城市描述
-            document.getElementById('cityDescription').textContent = matchedCity.description;
-            
-            // 添加备选城市
-            const alternativeCitiesContainer = document.getElementById('alternativeCities');
-            alternativeCitiesContainer.innerHTML = '';
-            
-            const otherCities = getTopCities(4); // 获取前4个匹配城市（包括第一名）
-            otherCities.forEach((city, index) => {
-                if (index === 0) return; // 跳过第一名，已在主结果中显示
-                
-                const cityEl = document.createElement('div');
-                cityEl.className = 'alternative-city';
-                cityEl.innerHTML = `
-                    <div style="font-size: 2rem; margin-bottom: 10px;">${city.icon}</div>
-                    <div class="alternative-city-name">${city.name}</div>
-                    <div class="alternative-city-match">匹配度: ${city.matchPercentage}%</div>
-                `;
-                
-                // 点击切换到该城市
-                cityEl.addEventListener('click', () => {
-                    switchCity(city);
                 });
-                
-                alternativeCitiesContainer.appendChild(cityEl);
+
+                // 归一化到40-100
+                let finalScore = Math.min(100, Math.max(40, 40 + rawSum));
+                scores.push(finalScore);
             });
-            
-            // 显示结果界面
-            resultScreen.classList.add('active');
-            
-            // 绘制雷达图
-            drawRadarChart(matchedCity);
+            return scores;
         }
-        
-        // 计算匹配的城市
-        function calculateMatchedCity() {
-            // 计算用户在各维度的总分
-            const userTotalScores = { ...appState.userScores };
+
+        function renderRadar(city, userScores) {
+            if (typeof Chart === "undefined") return;
             
-            // 归一化用户分数（0-10范围）
-            Object.keys(userTotalScores).forEach(key => {
-                // 确保分数在0-10范围内
-                userTotalScores[key] = Math.max(0, Math.min(10, userTotalScores[key] + 5));
-            });
-            
-            // 计算每个城市的匹配度
-            const citiesWithMatch = cities.map(city => {
-                let totalDiff = 0;
-                let matchScore = 0;
-                
-                // 计算每个维度的差异
-                Object.keys(userTotalScores).forEach(key => {
-                    const diff = Math.abs(userTotalScores[key] - city.scores[key]);
-                    totalDiff += diff;
-                });
-                
-                // 计算匹配百分比（差异越小，匹配度越高）
-                matchScore = Math.max(0, 100 - totalDiff * 2);
-                
-                return {
-                    ...city,
-                    matchPercentage: Math.round(matchScore)
-                };
-            });
-            
-            // 按匹配度排序
-            citiesWithMatch.sort((a, b) => b.matchPercentage - a.matchPercentage);
-            
-            return citiesWithMatch[0];
-        }
-        
-        // 获取前N个匹配城市
-        function getTopCities(n) {
-            // 计算用户在各维度的总分
-            const userTotalScores = { ...appState.userScores };
-            
-            // 归一化用户分数（0-10范围）
-            Object.keys(userTotalScores).forEach(key => {
-                userTotalScores[key] = Math.max(0, Math.min(10, userTotalScores[key] + 5));
-            });
-            
-            // 计算每个城市的匹配度
-            const citiesWithMatch = cities.map(city => {
-                let totalDiff = 0;
-                
-                Object.keys(userTotalScores).forEach(key => {
-                    const diff = Math.abs(userTotalScores[key] - city.scores[key]);
-                    totalDiff += diff;
-                });
-                
-                const matchScore = Math.max(0, 100 - totalDiff * 2);
-                
-                return {
-                    ...city,
-                    matchPercentage: Math.round(matchScore)
-                };
-            });
-            
-            // 按匹配度排序并返回前n个
-            return citiesWithMatch.sort((a, b) => b.matchPercentage - a.matchPercentage).slice(0, n);
-        }
-        
-        // 切换到指定城市
-        function switchCity(city) {
-            // 更新主结果
-            document.getElementById('resultCityName').textContent = city.name;
-            document.getElementById('matchPercentage').textContent = `${city.matchPercentage}%`;
-            
-            // 更新城市标签
-            const cityTagsContainer = document.getElementById('cityTags');
-            cityTagsContainer.innerHTML = '';
-            city.tags.forEach(tag => {
-                const tagEl = document.createElement('div');
-                tagEl.className = 'city-tag';
-                tagEl.textContent = tag;
-                cityTagsContainer.appendChild(tagEl);
-            });
-            
-            // 更新城市描述
-            document.getElementById('cityDescription').textContent = city.description;
-            
-            // 重新绘制雷达图
-            drawRadarChart(city);
-        }
-        
-        // 绘制雷达图
-        function drawRadarChart(city) {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            
-            // 如果已有图表实例，销毁它
-            if (appState.radarChart) {
-                appState.radarChart.destroy();
-            }
-            
-            // 计算用户在各维度的总分
-            const userTotalScores = { ...appState.userScores };
-            
-            // 归一化用户分数（0-10范围）
-            Object.keys(userTotalScores).forEach(key => {
-                userTotalScores[key] = Math.max(0, Math.min(10, userTotalScores[key] + 5));
-            });
-            
-            // 维度标签
-            const dimensionLabels = {
-                economy: '经济活力',
-                pace: '生活节奏',
-                environment: '自然环境',
-                culture: '文化氛围',
-                cost: '生活成本',
-                social: '社交友好度'
-            };
-            
-            // 准备数据
-            const labels = Object.keys(dimensionLabels).map(key => dimensionLabels[key]);
-            const cityData = Object.keys(dimensionLabels).map(key => city.scores[key]);
-            const userData = Object.keys(dimensionLabels).map(key => userTotalScores[key]);
-            
-            // 创建雷达图
-            appState.radarChart = new Chart(ctx, {
-                type: 'radar',
+            const ctx = document.getElementById("radarChart");
+            if (window.myRadar) window.myRadar.destroy();
+
+            const labels = Object.values(DIMENSIONS).map((d) => d.label);
+            const userRadarValues = userScores ? calculateSixDimensions(userScores, true) : [60, 60, 60, 60, 60, 60];
+            const cityRadarValues = calculateSixDimensions(city.tags, false);
+
+            window.myRadar = new Chart(ctx, {
+                type: "radar",
                 data: {
                     labels: labels,
                     datasets: [
                         {
-                            label: '你的偏好',
-                            data: userData,
-                            backgroundColor: 'rgba(58, 134, 255, 0.2)',
-                            borderColor: 'rgba(58, 134, 255, 0.8)',
+                            label: city.name + "属性",
+                            data: cityRadarValues,
+                            backgroundColor: "rgba(200, 200, 200, 0.2)",
+                            borderColor: document.body.classList.contains('dark-mode') 
+                                ? "rgba(220, 220, 220, 0.8)" 
+                                : "rgba(150, 150, 150, 0.8)",
                             borderWidth: 2,
-                            pointBackgroundColor: 'rgba(58, 134, 255, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
+                            pointRadius: 0,
                         },
                         {
-                            label: city.name + '匹配度',
-                            data: cityData,
-                            backgroundColor: 'rgba(131, 56, 236, 0.2)',
-                            borderColor: 'rgba(131, 56, 236, 0.8)',
+                            label: "你的偏好",
+                            data: userRadarValues,
+                            borderColor: "#6366f1",
+                            backgroundColor: "rgba(99, 102, 241, 0.2)",
                             borderWidth: 2,
-                            pointBackgroundColor: 'rgba(131, 56, 236, 1)',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }
-                    ]
+                            pointBackgroundColor: "#fff",
+                            pointBorderColor: "#6366f1",
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            angleLines: {
-                                display: true,
-                                color: 'rgba(0, 0, 0, 0.1)'
+                            angleLines: { 
+                                color: document.body.classList.contains('dark-mode') 
+                                    ? "rgba(255, 255, 255, 0.1)" 
+                                    : "rgba(0, 0, 0, 0.1)" 
                             },
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
+                            grid: { 
+                                color: document.body.classList.contains('dark-mode') 
+                                    ? "rgba(255, 255, 255, 0.1)" 
+                                    : "rgba(0, 0, 0, 0.1)" 
                             },
+                            pointLabels: { 
+                                font: { size: 12, weight: "bold" }, 
+                                color: document.body.classList.contains('dark-mode') 
+                                    ? "#f1f5f9" 
+                                    : "#475569" 
+                            },
+                            ticks: { display: false },
                             suggestedMin: 0,
-                            suggestedMax: 10,
-                            ticks: {
-                                display: false,
-                                stepSize: 2
-                            },
-                            pointLabels: {
-                                font: {
-                                    size: 13,
-                                    weight: '600'
-                                },
-                                color: '#495057'
-                            }
-                        }
+                            suggestedMax: 100,
+                        },
                     },
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    size: 13
-                                },
-                                padding: 20,
-                                usePointStyle: true
-                            }
-                        }
-                    }
-                }
+                        legend: { 
+                            position: "bottom", 
+                            labels: { 
+                                boxWidth: 10,
+                                color: document.body.classList.contains('dark-mode') 
+                                    ? "#f1f5f9" 
+                                    : "#475569"
+                            } 
+                        },
+                    },
+                },
             });
         }
-        
-        // 重新开始测试
+
+        // ================= 7. 结果计算 =================
+        function calculateResult() {
+            document.getElementById("quiz-container").style.display = "none";
+            document.getElementById("action-bar").style.display = "none";
+            document.getElementById("loading").style.display = "block";
+
+            setTimeout(() => {
+                // 汇总用户得分
+                let userScores = {};
+                selectionHistory.forEach(
+                    (step) =>
+                        step &&
+                        step.forEach((t) => {
+                            for (let k in t) userScores[k] = (userScores[k] || 0) + t[k];
+                        })
+                );
+
+                // 计算城市匹配
+                const ranked = calculateCityScores(userScores);
+
+                // 显示结果
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("result-screen").style.display = "block";
+
+                // 显示冠军城市
+                const winner = ranked[0];
+                document.getElementById("city-name").innerText = winner.name;
+                document.getElementById("city-tags").innerHTML = (winner.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
+                document.getElementById("city-desc").innerText = winner.desc;
+
+                // 渲染雷达图
+                renderRadar(winner, userScores);
+
+                // 渲染备选城市
+                const otherContainer = document.getElementById("second-options-container");
+                otherContainer.innerHTML = "";
+
+                ranked.slice(0, 4).forEach((c, idx) => {
+                    const el = document.createElement("div");
+                    el.className = "city-link-btn";
+                    if (idx === 0) el.classList.add("active");
+                    el.innerText = `${c.name} (${c.displayScore}%)`;
+
+                    el.onclick = () => {
+                        document.querySelectorAll(".city-link-btn").forEach((b) => b.classList.remove("active"));
+                        el.classList.add("active");
+
+                        document.getElementById("city-name").innerText = c.name;
+                        document.getElementById("city-tags").innerHTML = (c.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
+                        document.getElementById("city-desc").innerText = c.desc;
+
+                        renderRadar(c, userScores);
+                    };
+                    otherContainer.appendChild(el);
+                });
+            }, 1500);
+        }
+
+        // ================= 8. 结果页面功能 =================
+        function saveResultAsImage() {
+            const resultScreen = document.getElementById("result-screen");
+            const buttons = document.querySelector('.result-actions');
+            
+            // 临时隐藏按钮
+            buttons.style.display = 'none';
+            
+            html2canvas(resultScreen, {
+                backgroundColor: document.body.classList.contains('dark-mode') ? '#0f172a' : '#f8fafc',
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                // 恢复按钮显示
+                buttons.style.display = 'flex';
+                
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = `城市匹配结果-${document.getElementById('city-name').textContent}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // 显示成功提示
+                showNotification('结果已保存为图片！');
+            }).catch(error => {
+                buttons.style.display = 'flex';
+                showNotification('保存失败，请重试');
+                console.error('保存图片失败:', error);
+            });
+        }
+
+        function showNotification(message) {
+            // 创建提示元素
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-weight: 500;
+                animation: fadeInOut 3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 2500);
+        }
+
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateY(-10px); }
+                10% { opacity: 1; transform: translateY(0); }
+                90% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-10px); }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
         function restartTest() {
-            // 重置状态
-            appState.currentQuestionIndex = 0;
-            appState.userAnswers = [];
-            appState.userScores = { economy: 0, pace: 0, environment: 0, culture: 0, cost: 0, social: 0 };
+            // 重置所有状态
+            currentStep = 0;
+            selectionHistory = [];
             
-            // 清除雷达图
-            if (appState.radarChart) {
-                appState.radarChart.destroy();
-                appState.radarChart = null;
-            }
+            // 切换回问卷页面
+            document.getElementById("result-screen").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            document.getElementById("action-bar").style.display = "flex";
             
-            // 重置验证码输入
-            codeInput.value = '';
-            errorMessage.style.display = 'none';
-            codeInput.style.borderColor = '#e9ecef';
+            // 重新开始
+            initQuiz();
             
-            // 切换到欢迎界面
-            resultScreen.classList.remove('active');
-            welcomeScreen.style.display = 'flex';
+            // 滚动到顶部
+            document.getElementById("quiz-container").scrollTop = 0;
         }
-        
-        // 分享结果
-        function shareResult() {
-            const cityName = document.getElementById('resultCityName').textContent;
-            const matchPercentage = document.getElementById('matchPercentage').textContent;
+
+        // ================= 9. 调试功能 =================
+        // 为方便测试，可以快速跳转到结果页
+        function devSkipToResult(cityName) {
+            // 直接填充数据并跳转到结果页
+            const city = cities.find(c => c.name === cityName) || cities[0];
             
-            const shareText = `我的城市归属测试结果：最适合我的城市是${cityName}，匹配度${matchPercentage}！快来测试你最适合哪个城市吧！`;
+            // 模拟用户选择数据
+            const userScores = {
+                chill: 8,
+                nature: 9,
+                sea: 5,
+                food: 7,
+                stable: 6,
+                culture: 8
+            };
             
-            // 检查是否支持Web Share API
-            if (navigator.share) {
-                navigator.share({
-                    title: '城市归属测试结果',
-                    text: shareText,
-                    url: window.location.href
-                })
-                .catch(error => {
-                    console.log('分享失败:', error);
-                    fallbackShare(shareText);
-                });
-            } else {
-                fallbackShare(shareText);
-            }
+            // 直接显示结果
+            document.getElementById("captcha-screen").style.display = "none";
+            document.getElementById("quiz-app").style.display = "flex";
+            document.getElementById("quiz-container").style.display = "none";
+            document.getElementById("action-bar").style.display = "none";
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            
+            document.getElementById("city-name").innerText = city.name;
+            document.getElementById("city-tags").innerHTML = (city.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
+            document.getElementById("city-desc").innerText = city.desc;
+            
+            renderRadar(city, userScores);
         }
-        
-        // 备用分享方式（复制到剪贴板）
-        function fallbackShare(shareText) {
-            // 复制到剪贴板
-            navigator.clipboard.writeText(shareText)
-                .then(() => {
-                    alert('结果已复制到剪贴板，快去分享给朋友吧！');
-                })
-                .catch(err => {
-                    console.error('复制失败:', err);
-                    // 备用方案：显示提示让用户手动复制
-                    prompt('请手动复制以下文字分享给朋友：', shareText);
-                });
-        }
-        
-        // 初始化应用
-        document.addEventListener('DOMContentLoaded', init);
+
+        // 在控制台暴露调试函数
+        window.devSkipToResult = devSkipToResult;
     </script>
 </body>
 </html>
