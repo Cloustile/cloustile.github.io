@@ -113,19 +113,6 @@
         z-index: 10;
       }
 
-      /* 截图时的特殊样式 */
-      .capturing .container {
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        background: white !important;
-        border: 1px solid #eee !important;
-      }
-      
-      .dark-mode .capturing .container {
-        background: #1a1a1a !important;
-        border: 1px solid #333 !important;
-      }
-
       /* ================= 暗色模式切换按钮 ================= */
       .theme-toggle {
         position: absolute;
@@ -688,47 +675,6 @@
         border-color: transparent;
       }
 
-      /* ================= 结果页面按钮 ================= */
-      .result-actions {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        margin-top: 30px;
-        flex-wrap: wrap;
-      }
-
-      .result-btn {
-        background: var(--glass-bg);
-        border: 1px solid var(--border);
-        color: var(--text-main);
-        padding: 14px 28px;
-        border-radius: 14px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        transition: all 0.3s;
-        min-width: 160px;
-        justify-content: center;
-      }
-
-      .result-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      }
-
-      .result-btn.save {
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        color: white;
-        border: none;
-      }
-
-      .result-btn.restart {
-        background: rgba(148, 163, 184, 0.1);
-      }
-
       /* ================= 加载动画 ================= */
       #loading {
         display: none;
@@ -892,20 +838,10 @@
             </div>
             <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center"></div>
         </div>
-
-        <!-- 结果页面按钮 -->
-        <div class="result-actions">
-            <button class="result-btn save" onclick="saveResultAsImage()">
-                <i class="fas fa-camera"></i> 保存结果
-            </button>
-            <button class="result-btn restart" onclick="restartTest()">
-                <i class="fas fa-redo"></i> 重新测试
-            </button>
-        </div>
     </div>
 
     <div class="copyright-footer">
-        该测试由Data Science Lab提供 • 结果仅供参考<br />
+        该测试由<a href="https://www.xiaohongshu.com/user/profile/69194eaf000000003202a2eb?xsec_token=ABwolm2qNpWOzcQYtK7ZPcNynScR0kHFWthsfNlIPIwTQ%3D&xsec_source=pc_search">葡萄冰美式</a>提供 • 结果仅供参考<br />
     </div>
 
     <script>
@@ -982,294 +918,534 @@
 
         // ================= 2. 城市数据库 =================
         const cities = [
-            {
-                name: "大理",
-                tags: { sea: -1, chill: 10, lowHousePrice: 8, warm: 8, nature: 10, slow: 10, edu: 2, medical: 2, romantic: 9 },
-                displayTags: ["风花雪月", "慢生活", "文艺青年"],
-                desc: "你是追求精神自由的旅人。大理的苍山洱海、古城石板路和文艺气息，是逃离都市喧嚣的理想之地。这里适合数字游民、自由职业者，或者渴望在自然中寻找自我的你。",
-                detail: {
-                    soul: "大理与你向往自由、追求精神独立的灵魂高度契合。这里的慢节奏和自然风光能治愈都市带来的疲惫。",
-                    life: "清晨在洱海边散步，下午在古城咖啡馆读书，夜晚在人民路听民谣。生活在这里不是生存，而是体验。",
-                    culture: "聚集了全国各地的文艺青年、数字游民和自由职业者，形成了独特的社群文化，包容而开放。",
-                    highlight: "在大理，时间不是金钱，而是可以细细品味的礼物。"
-                }
-            },
-            {
-                name: "成都",
-                tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 6, spicy: 10, ent: 10, edu: 8, medical: 9, food: 10 },
-                displayTags: ["天府之国", "美食之都", "巴适生活"],
-                desc: "你懂得享受生活，追求工作与生活的平衡。成都有顶级医疗资源（华西医院）、丰富的美食和悠闲的生活节奏。这里包容开放，既有发展机会，也有打麻将喝茶的闲适。",
-                detail: {
-                    soul: "成都与你'巴适得板'的生活态度完美匹配。懂得享受当下，又不忘奋斗的意义。",
-                    life: "早上茶馆一碗盖碗茶，中午火锅串串香，下午公园晒太阳，晚上九眼桥小酒馆。",
-                    culture: "成都人乐观豁达，'安逸'不是懒散，而是对生活品质的追求。这里新旧交融，传统与时尚并存。",
-                    highlight: "在成都，奋斗是为了更好的生活，而生活本身已是享受。"
-                }
-            },
-            {
-                name: "上海",
-                tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
-                displayTags: ["国际魔都", "精致生活", "机遇之城"],
-                desc: "你追求卓越，向往国际化、精致的生活方式。上海有最前沿的时尚、最多的职业机会和顶级的医疗教育资源。这里竞争激烈但回报丰厚，适合有野心的奋斗者。",
-                detail: {
-                    soul: "上海与你追求卓越、向往国际化的灵魂深度共鸣。这里是实现梦想的舞台。",
-                    life: "外滩的璀璨夜景，法租界的梧桐街道，新天地的时尚潮流——上海的魅力无处不在。",
-                    culture: "中西文化交融，海纳百川，既有历史的厚重，又有未来的先锋。",
-                    highlight: "在上海，每一天都是与世界对话的机会。"
-                }
-            },
-            {
-                name: "重庆",
-                tags: { sea: -1, chill: 7, lowHousePrice: 8, warm: 8, spicy: 10, mountains: 10, edu: 7, medical: 8, nightLife: 9 },
-                displayTags: ["山城", "火锅之都", "8D魔幻"],
-                desc: "你性格直爽，喜欢有特色的城市景观和热辣的生活。重庆的立体交通、夜景和火锅文化独具魅力。这里人热情豪爽，生活成本相对较低，适合喜欢烟火气的你。",
-                detail: {
-                    soul: "重庆与你直爽热情的性格完美契合，这里的生活就像火锅一样热辣鲜活。",
-                    life: "穿梭在8D魔幻的立体交通中，从洪崖洞的夜景到南山一棵树的俯瞰，每一天都充满惊喜。",
-                    culture: "江湖气息浓厚，人们直爽热情，生活节奏张弛有度，既有都市的繁华，也有人间的烟火。",
-                    highlight: "在重庆，生活就像爬坡上坎，虽然辛苦，但风景独好。"
-                }
-            },
-            {
-                name: "杭州",
-                tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
-                displayTags: ["电商之都", "西湖美景", "数字之城"],
-                desc: "你既想追求事业成功，又向往诗意生活。杭州是互联网和电商中心，同时拥有西湖美景和江南韵味。这里适合希望在科技行业发展的文艺青年。",
-                detail: {
-                    soul: "杭州与你既追求事业又向往诗意的双重特质完美匹配，这里是科技与人文的交汇点。",
-                    life: "早晨在西溪湿地晨跑，白天在互联网公司奋斗，傍晚在西湖边散步，周末去龙井村品茶。",
-                    culture: "既有江南水乡的温婉，又有数字经济的活力，古典与现代在这里和谐共生。",
-                    highlight: "在杭州，你可以左手代码，右手诗篇，生活与梦想从不冲突。"
-                }
-            },
-            {
-                name: "北京",
-                tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
-                displayTags: ["首都", "文化中心", "资源高地"],
-                desc: "你追求顶级资源和宏大平台，能够承受快节奏和高压力。北京有最好的教育、医疗和文化资源，适合有雄心壮志、想在体制内或大平台发展的你。",
-                detail: {
-                    soul: "北京与你追求卓越、志存高远的灵魂深度契合，这里是实现宏大梦想的地方。",
-                    life: "故宫的红墙黄瓦，胡同的市井生活，CBD的摩天大楼——北京包容着所有的可能性。",
-                    culture: "文化底蕴深厚，教育资源顶尖，机遇与挑战并存，适合有野心和韧性的奋斗者。",
-                    highlight: "在北京，你可以触摸历史的脉搏，也可以参与未来的创造。"
-                }
-            },
-            {
-                name: "深圳",
-                tags: { sea: 1, chill: 2, lowHousePrice: -8, warm: 9, tech: 10, hustle: 10, edu: 7, medical: 8, young: 10 },
-                displayTags: ["创新之都", "青春之城", "搞钱第一"],
-                desc: "你是充满活力的奋斗者，追求效率、创新和高收入。深圳年轻、开放、充满机会，适合想在科技、金融领域快速发展的年轻人。",
-                detail: {
-                    soul: "深圳与你追求创新、渴望突破的灵魂高度契合，这里是年轻梦想家的乐园。",
-                    life: "从华强北的电子市场到南山科技园的写字楼，从大梅沙的海滩到欢乐谷的游乐场，深圳永远充满活力。",
-                    culture: "平均年龄32岁，移民城市，包容开放，'时间就是金钱，效率就是生命'是这里的信条。",
-                    highlight: "在深圳，每一天都是新的开始，每一个梦想都值得被尊重。"
-                }
-            },
-            {
-                name: "西安",
-                tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 5, history: 10, heavyFood: 9, edu: 9, medical: 8, culture: 9 },
-                displayTags: ["古都", "碳水天堂", "文化底蕴"],
-                desc: "你热爱历史和文化，喜欢有厚重感的城市。西安有深厚的历史底蕴、丰富的美食和相对较低的生活成本，适合喜欢传统文化又希望有现代便利的你。",
-                detail: {
-                    soul: "西安与你热爱历史、尊重传统的灵魂深度共鸣，这里是中华文明的源头之一。",
-                    life: "早晨一碗羊肉泡馍，白天参观博物馆和历史遗迹，晚上逛回民街吃美食，生活充实而有滋味。",
-                    culture: "十三朝古都，历史文化底蕴深厚，人们朴实豪爽，生活节奏适中，物价亲民。",
-                    highlight: "在西安，你可以与千年的历史对话，感受时间的重量。"
-                }
-            },
-        ];
+    {
+        name: "大理",
+        tags: { sea: -1, chill: 10, lowHousePrice: 8, warm: 8, nature: 10, slow: 10, edu: 2, medical: 2, romantic: 9 },
+        displayTags: ["风花雪月", "慢生活", "文艺青年"],
+        desc: "你是追求精神自由的旅人。大理的苍山洱海、古城石板路和文艺气息，是逃离都市喧嚣的理想之地。这里适合数字游民、自由职业者，或者渴望在自然中寻找自我的你。",
+        detail: {
+            soul: "大理与你向往自由、追求精神独立的灵魂高度契合。这里的慢节奏和自然风光能治愈都市带来的疲惫。",
+            life: "清晨在洱海边散步，下午在古城咖啡馆读书，夜晚在人民路听民谣。生活在这里不是生存，而是体验。",
+            culture: "聚集了全国各地的文艺青年、数字游民和自由职业者，形成了独特的社群文化，包容而开放。",
+            highlight: "在大理，时间不是金钱，而是可以细细品味的礼物。"
+        }
+    },
+    {
+        name: "成都",
+        tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 6, spicy: 10, ent: 10, edu: 8, medical: 9, food: 10 },
+        displayTags: ["天府之国", "美食之都", "巴适生活"],
+        desc: "你懂得享受生活，追求工作与生活的平衡。成都有顶级医疗资源（华西医院）、丰富的美食和悠闲的生活节奏。这里包容开放，既有发展机会，也有打麻将喝茶的闲适。",
+        detail: {
+            soul: "成都与你'巴适得板'的生活态度完美匹配。懂得享受当下，又不忘奋斗的意义。",
+            life: "早上茶馆一碗盖碗茶，中午火锅串串香，下午公园晒太阳，晚上九眼桥小酒馆。",
+            culture: "成都人乐观豁达，'安逸'不是懒散，而是对生活品质的追求。这里新旧交融，传统与时尚并存。",
+            highlight: "在成都，奋斗是为了更好的生活，而生活本身已是享受。"
+        }
+    },
+    {
+        name: "上海",
+        tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
+        displayTags: ["国际魔都", "精致生活", "机遇之城"],
+        desc: "你追求卓越，向往国际化、精致的生活方式。上海有最前沿的时尚、最多的职业机会和顶级的医疗教育资源。这里竞争激烈但回报丰厚，适合有野心的奋斗者。",
+        detail: {
+            soul: "上海与你追求卓越、向往国际化的灵魂深度共鸣。这里是实现梦想的舞台。",
+            life: "外滩的璀璨夜景，法租界的梧桐街道，新天地的时尚潮流——上海的魅力无处不在。",
+            culture: "中西文化交融，海纳百川，既有历史的厚重，又有未来的先锋。",
+            highlight: "在上海，每一天都是与世界对话的机会。"
+        }
+    },
+    {
+        name: "重庆",
+        tags: { sea: -1, chill: 7, lowHousePrice: 8, warm: 8, spicy: 10, mountains: 10, edu: 7, medical: 8, nightLife: 9 },
+        displayTags: ["山城", "火锅之都", "8D魔幻"],
+        desc: "你性格直爽，喜欢有特色的城市景观和热辣的生活。重庆的立体交通、夜景和火锅文化独具魅力。这里人热情豪爽，生活成本相对较低，适合喜欢烟火气的你。",
+        detail: {
+            soul: "重庆与你直爽热情的性格完美契合，这里的生活就像火锅一样热辣鲜活。",
+            life: "穿梭在8D魔幻的立体交通中，从洪崖洞的夜景到南山一棵树的俯瞰，每一天都充满惊喜。",
+            culture: "江湖气息浓厚，人们直爽热情，生活节奏张弛有度，既有都市的繁华，也有人间的烟火。",
+            highlight: "在重庆，生活就像爬坡上坎，虽然辛苦，但风景独好。"
+        }
+    },
+    {
+        name: "杭州",
+        tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
+        displayTags: ["电商之都", "西湖美景", "数字之城"],
+        desc: "你既想追求事业成功，又向往诗意生活。杭州是互联网和电商中心，同时拥有西湖美景和江南韵味。这里适合希望在科技行业发展的文艺青年。",
+        detail: {
+            soul: "杭州与你既追求事业又向往诗意的双重特质完美匹配，这里是科技与人文的交汇点。",
+            life: "早晨在西溪湿地晨跑，白天在互联网公司奋斗，傍晚在西湖边散步，周末去龙井村品茶。",
+            culture: "既有江南水乡的温婉，又有数字经济的活力，古典与现代在这里和谐共生。",
+            highlight: "在杭州，你可以左手代码，右手诗篇，生活与梦想从不冲突。"
+        }
+    },
+    {
+        name: "北京",
+        tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
+        displayTags: ["首都", "文化中心", "资源高地"],
+        desc: "你追求顶级资源和宏大平台，能够承受快节奏和高压力。北京有最好的教育、医疗和文化资源，适合有雄心壮志、想在体制内或大平台发展的你。",
+        detail: {
+            soul: "北京与你追求卓越、志存高远的灵魂深度契合，这里是实现宏大梦想的地方。",
+            life: "故宫的红墙黄瓦，胡同的市井生活，CBD的摩天大楼——北京包容着所有的可能性。",
+            culture: "文化底蕴深厚，教育资源顶尖，机遇与挑战并存，适合有野心和韧性的奋斗者。",
+            highlight: "在北京，你可以触摸历史的脉搏，也可以参与未来的创造。"
+        }
+    },
+    {
+        name: "深圳",
+        tags: { sea: 1, chill: 2, lowHousePrice: -8, warm: 9, tech: 10, hustle: 10, edu: 7, medical: 8, young: 10 },
+        displayTags: ["创新之都", "青春之城", "搞钱第一"],
+        desc: "你是充满活力的奋斗者，追求效率、创新和高收入。深圳年轻、开放、充满机会，适合想在科技、金融领域快速发展的年轻人。",
+        detail: {
+            soul: "深圳与你追求创新、渴望突破的灵魂高度契合，这里是年轻梦想家的乐园。",
+            life: "从华强北的电子市场到南山科技园的写字楼，从大梅沙的海滩到欢乐谷的游乐场，深圳永远充满活力。",
+            culture: "平均年龄32岁，移民城市，包容开放，'时间就是金钱，效率就是生命'是这里的信条。",
+            highlight: "在深圳，每一天都是新的开始，每一个梦想都值得被尊重。"
+        }
+    },
+    {
+        name: "西安",
+        tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 5, history: 10, heavyFood: 9, edu: 9, medical: 8, culture: 9 },
+        displayTags: ["古都", "碳水天堂", "文化底蕴"],
+        desc: "你热爱历史和文化，喜欢有厚重感的城市。西安有深厚的历史底蕴、丰富的美食和相对较低的生活成本，适合喜欢传统文化又希望有现代便利的你。",
+        detail: {
+            soul: "西安与你热爱历史、尊重传统的灵魂深度共鸣，这里是中华文明的源头之一。",
+            life: "早晨一碗羊肉泡馍，白天参观博物馆和历史遗迹，晚上逛回民街吃美食，生活充实而有滋味。",
+            culture: "十三朝古都，历史文化底蕴深厚，人们朴实豪爽，生活节奏适中，物价亲民。",
+            highlight: "在西安，你可以与千年的历史对话，感受时间的重量。"
+        }
+    },
+    {
+        name: "广州",
+        tags: { sea: -1, chill: 6, lowHousePrice: -3, warm: 9, lightFood: 10, trade: 10, edu: 9, medical: 9, pragmatic: 10 },
+        displayTags: ["美食天堂", "务实之城", "商贸之都"],
+        desc: "你务实低调，注重生活品质和美食体验。广州生活气息浓厚，医疗教育资源优秀，房价相对一线城市更友好，适合追求性价比的务实派。",
+        detail: {
+            soul: "广州与你务实、注重生活品质的灵魂完美契合，这里是'务实主义'的理想家园。",
+            life: "清晨在茶楼喝早茶，白天在商贸中心忙碌，晚上在老城区品尝地道美食，生活充实而有温度。",
+            culture: "广州人务实低调，注重生活享受，商业氛围浓厚，是一座充满烟火气的千年商都。",
+            highlight: "在广州，你可以脚踏实地奋斗，也能实实在在地享受生活的美好。"
+        }
+    },
+    {
+        name: "长沙",
+        tags: { sea: -1, chill: 8, lowHousePrice: 8, warm: 7, spicy: 9, ent: 10, edu: 8, medical: 8, nightLife: 10 },
+        displayTags: ["娱乐之都", "房价洼地", "不夜城"],
+        desc: "你热爱生活，喜欢热闹和娱乐。长沙房价友好、夜生活丰富、美食多样，适合追求快乐生活、不想被房贷压垮的年轻人。",
+        detail: {
+            soul: "长沙与你热爱生活、追求快乐的天性高度匹配，这里是'快乐至上'的城市。",
+            life: "从火宫殿的小吃到解放西的夜店，从岳麓山的清晨到湘江边的夜晚，长沙的每一天都充满活力。",
+            culture: "长沙人热情奔放，娱乐精神十足，这是一座为快乐而生的城市。",
+            highlight: "在长沙，奋斗不是为了生存，而是为了更好地享受生活。"
+        }
+    },
+    {
+        name: "丽江",
+        tags: { sea: -1, chill: 10, lowHousePrice: 7, warm: 7, nature: 10, romantic: 10, edu: 2, medical: 3, slow: 10 },
+        displayTags: ["古城韵味", "艳遇之都", "慢时光"],
+        desc: "你向往诗和远方，渴望逃离都市的喧嚣。丽江的古城、雪山和慢节奏生活，是文艺青年和追求心灵自由者的理想之地。",
+        detail: {
+            soul: "丽江与你向往自由、渴望远方的心灵深度共鸣，这里是灵魂的栖息地。",
+            life: "在古城的小巷里漫步，在客栈的院子里发呆，在玉龙雪山脚下感受自然的壮丽。",
+            culture: "聚集了来自全国各地的追梦人，形成了独特的文艺社群，自由而包容。",
+            highlight: "在丽江，你可以忘记时间，只听从内心的声音。"
+        }
+    },
+    {
+        name: "三亚",
+        tags: { sea: 10, chill: 9, lowHousePrice: -5, warm: 10, nature: 9, tourism: 10, edu: 4, medical: 5, vacation: 10 },
+        displayTags: ["热带天堂", "度假胜地", "海滨生活"],
+        desc: "你热爱阳光、沙滩和大海，追求度假般的生活。三亚有中国最美的海滩和温暖的气候，适合喜欢水上运动、追求休闲生活的人。",
+        detail: {
+            soul: "三亚与你热爱自然、向往悠闲生活的灵魂完美契合，这里是现实中的天堂。",
+            life: "清晨在海边看日出，白天潜水冲浪，傍晚在椰林下散步，夜晚听海浪入眠。",
+            culture: "多元文化交融，既有本土的黎苗文化，也有来自全国各地的'候鸟'族，轻松而开放。",
+            highlight: "在三亚，生活就是一场永不结束的假期。"
+        }
+    },
+    {
+        name: "青岛",
+        tags: { sea: 9, chill: 7, lowHousePrice: 4, warm: 6, beer: 10, nature: 8, edu: 7, medical: 7, european: 8 },
+        displayTags: ["红瓦绿树", "啤酒之城", "海滨风情"],
+        desc: "你喜欢有特色的海滨城市，享受啤酒、海鲜和欧式建筑。青岛气候宜人，生活节奏适中，适合喜欢海洋文化又希望有城市便利的你。",
+        detail: {
+            soul: "青岛与你热爱海洋、享受生活的性格完美匹配，这里既有北方的豪爽，也有海洋的浪漫。",
+            life: "在八大关的林荫道上骑行，在啤酒节上畅饮，在海边吃着海鲜看日落。",
+            culture: "中西文化交融，既有德式建筑的优雅，也有海洋文化的开放。",
+            highlight: "在青岛，每一口啤酒都带着海风的清新。"
+        }
+    },
+    {
+        name: "厦门",
+        tags: { sea: 9, chill: 8, lowHousePrice: -6, warm: 9, romantic: 10, clean: 10, edu: 8, medical: 7, island: 10 },
+        displayTags: ["海上花园", "文艺清新", "慢生活"],
+        desc: "你追求浪漫、精致的生活环境。厦门有美丽的海岸线、文艺的鼓浪屿和干净的城市环境，适合喜欢小资情调、注重生活品质的你。",
+        detail: {
+            soul: "厦门与你追求精致、热爱浪漫的灵魂深度契合，这里是文艺青年的理想国。",
+            life: "在鼓浪屿的小巷中迷路，在环岛路上骑行，在曾厝垵的咖啡馆里度过一个下午。",
+            culture: "文艺气息浓厚，城市干净整洁，人们温和有礼，生活节奏悠闲。",
+            highlight: "在厦门，每一天都像在电影里，浪漫而美好。"
+        }
+    },
+    {
+        name: "苏州",
+        tags: { sea: -1, chill: 7, lowHousePrice: -2, warm: 7, garden: 10, manu: 9, edu: 8, medical: 7, culture: 9 },
+        displayTags: ["园林之城", "江南水乡", "工业强市"],
+        desc: "你欣赏古典美，又重视现代产业发展。苏州完美融合了古典园林和现代工业园区，既有文化底蕴又有经济活力，适合追求平衡发展的你。",
+        detail: {
+            soul: "苏州与你既传统又现代的双重特质完美匹配，这里既有历史的厚重，也有未来的活力。",
+            life: "白天在工业园区奋斗，傍晚在平江路散步，周末在拙政园感受古典园林的意境。",
+            culture: "吴文化底蕴深厚，同时又积极拥抱现代工业文明，传统与现代和谐共存。",
+            highlight: "在苏州，你可以左手握着千年历史，右手握着未来机遇。"
+        }
+    },
+    {
+        name: "南京",
+        tags: { sea: -1, chill: 6, lowHousePrice: -1, warm: 7, history: 9, edu: 10, medical: 9, culture: 9, stable: 8 },
+        displayTags: ["六朝古都", "教育重镇", "文化名城"],
+        desc: "你重视教育和文化，喜欢有历史底蕴的城市。南京高校云集，医疗资源优秀，生活节奏适中，适合重视子女教育和个人发展的家庭。",
+        detail: {
+            soul: "南京与你重视教育、尊重传统的灵魂深度共鸣，这里是知识与历史的交汇点。",
+            life: "在玄武湖边晨跑，在南大校园里读书，在夫子庙感受市井烟火，在中山陵追忆历史。",
+            culture: "六朝古都，文化底蕴深厚，教育资源丰富，城市包容而稳重。",
+            highlight: "在南京，每一步都踏着历史的回响，每一刻都感受着文化的熏陶。"
+        }
+    },
+    {
+        name: "武汉",
+        tags: { sea: -1, chill: 5, lowHousePrice: 6, warm: 8, heavyFood: 9, river: 10, edu: 9, medical: 9, hub: 10 },
+        displayTags: ["江城", "过早之都", "九省通衢"],
+        desc: "你性格豪爽，喜欢大江大河的气势。武汉地理位置优越，医疗教育资源强大，生活成本适中，适合喜欢热闹、追求便利交通的你。",
+        detail: {
+            soul: "武汉与你豪爽大气、热爱生活的性格完美契合，这里既有大江大河的气魄，也有市井烟火的温暖。",
+            life: "早晨在户部巷过早，白天在光谷打拼，傍晚在东湖散步，夜晚在江滩看灯光秀。",
+            culture: "江湖气息浓厚，人们直爽热情，城市充满活力，生活气息浓郁。",
+            highlight: "在武汉，每一天都过得热气腾腾，充满生命力。"
+        }
+    },
+    {
+        name: "泉州",
+        tags: { sea: 1, chill: 7, lowHousePrice: 7, warm: 9, history: 9, business: 8, edu: 6, medical: 6, culture: 9 },
+        displayTags: ["海上丝绸之路", "闽南文化", "民营经济"],
+        desc: "你喜欢有独特文化底蕴的沿海城市。泉州是海上丝绸之路起点，闽南文化浓郁，民营经济活跃，适合喜欢历史文化又希望有商业机会的你。",
+        detail: {
+            soul: "泉州与你既有文化底蕴又具商业头脑的特质完美匹配，这里是历史与现实的交汇处。",
+            life: "在开元寺感受千年古刹的宁静，在西街品尝地道小吃，在晋江感受民营经济的活力。",
+            culture: "闽南文化浓郁，民营经济发达，既有历史的厚重，也有现代的活力。",
+            highlight: "在泉州，你可以触摸海上丝绸之路的历史，也能参与民营经济的未来。"
+        }
+    },
+    {
+        name: "香港",
+        tags: { sea: 1, chill: 2, lowHousePrice: -10, warm: 9, finance: 10, foreign: 10, edu: 10, medical: 10, hustle: 10 },
+        displayTags: ["国际都会", "购物天堂", "金融中心"],
+        desc: "你追求国际化、高效率的生活，能够承受高压力和高成本。香港是亚洲金融中心，中西文化交融，适合追求顶尖职业发展和国际视野的你。",
+        detail: {
+            soul: "香港与你追求卓越、渴望国际化的灵魂深度共鸣，这里是连接中国与世界的桥梁。",
+            life: "在中环的摩天大楼里工作，在维多利亚港欣赏夜景，在兰桂坊享受夜生活，在离岛度过周末。",
+            culture: "中西文化完美交融，国际化程度高，效率至上，充满活力。",
+            highlight: "在香港，你站在亚洲之巅，与世界同步。"
+        }
+    },
+    {
+        name: "台北",
+        tags: { sea: -1, chill: 7, lowHousePrice: -5, warm: 9, food: 10, culture: 9, edu: 9, medical: 9, friendly: 9 },
+        displayTags: ["美食之都", "文化多元", "人情味浓"],
+        desc: "你注重生活细节，喜欢多元文化和美食。台北以丰富的小吃、便捷的生活和浓厚的人情味著称，适合追求生活品质和文化体验的你。",
+        detail: {
+            soul: "台北与你注重细节、热爱生活的灵魂完美契合，这里是人情味与现代化的完美结合。",
+            life: "在夜市寻找美食，在诚品书店度过一个下午，在阳明山看夜景，在西门町感受青春活力。",
+            culture: "文化多元而包容，人情味浓厚，生活便利而精致。",
+            highlight: "在台北，每一处细节都透着生活的温度。"
+        }
+    },
+    {
+        name: "扬州",
+        tags: { sea: -1, chill: 8, lowHousePrice: 6, warm: 7, garden: 9, food: 9, edu: 6, medical: 6, slow: 9 },
+        displayTags: ["淮扬菜", "园林城市", "慢生活"],
+        desc: "你喜欢精致、悠闲的生活方式。扬州以淮扬菜、古典园林和慢节奏生活闻名，适合追求生活情趣、喜欢江南文化的你。",
+        detail: {
+            soul: "扬州与你追求精致、热爱悠闲生活的灵魂高度契合，这里是古典江南的缩影。",
+            life: "在瘦西湖边散步，在富春茶社吃早茶，在个园欣赏园林艺术，在古运河边感受历史。",
+            culture: "淮扬文化底蕴深厚，生活节奏缓慢，人们注重生活品质和情趣。",
+            highlight: "在扬州，生活不是匆忙的奔波，而是优雅的享受。"
+        }
+    },
+    {
+        name: "哈尔滨",
+        tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 2, cold: 10, heavyFood: 9, edu: 8, medical: 8, european: 9 },
+        displayTags: ["冰城", "欧式风情", "豪爽热情"],
+        desc: "你喜欢鲜明的四季和异域风情，不怕寒冷。哈尔滨有独特的冰雪文化、俄式建筑和豪爽的民风，适合喜欢冬季运动和特色文化的你。",
+        detail: {
+            soul: "哈尔滨与你热爱特色、不惧寒冷的性格完美匹配，这里是冰雪与欧式风情的浪漫结合。",
+            life: "在中央大街感受欧式建筑，在冰雪大世界欣赏冰雕，在松花江上滑冰，在俄式餐厅品尝美食。",
+            culture: "中西文化交融，俄式风情浓郁，人们豪爽热情，冬季文化独特。",
+            highlight: "在哈尔滨，寒冷的冬天也变得温暖而浪漫。"
+        }
+    },
+    {
+        name: "昆明",
+        tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 8, seasons: 10, nature: 9, edu: 7, medical: 7, flowers: 10 },
+        displayTags: ["春城", "鲜花之都", "气候宜人"],
+        desc: "你追求舒适的气候和自然环境。昆明四季如春，鲜花常开，生活节奏悠闲，适合厌倦极端天气、想要舒适生活的你。",
+        detail: {
+            soul: "昆明与你追求舒适、热爱自然的灵魂完美契合，这里是大自然的馈赠。",
+            life: "在滇池边看海鸥，在斗南花市买鲜花，在翠湖公园散步，在石林感受自然奇观。",
+            culture: "多元民族文化交融，生活节奏悠闲，气候宜人，四季如春。",
+            highlight: "在昆明，每一天都是春天，每一刻都充满花香。"
+        }
+    },
+    {
+        name: "威海",
+        tags: { sea: 10, chill: 9, lowHousePrice: 6, warm: 7, clean: 10, nature: 9, edu: 5, medical: 6, slow: 9 },
+        displayTags: ["最宜居", "干净城市", "海滨慢生活"],
+        desc: "你追求干净、安静的海滨生活。威海以洁净的环境、优美的海岸线和慢节奏生活闻名，适合喜欢海洋、追求宜居环境的你。",
+        detail: {
+            soul: "威海与你追求纯净、向往宁静的灵魂高度契合，这里是理想中的宜居之城。",
+            life: "在环海路上骑行，在国际海水浴场游泳，在刘公岛感受历史，在渔村品尝海鲜。",
+            culture: "城市干净整洁，生活节奏缓慢，人们温和友善，环境优美宁静。",
+            highlight: "在威海，你可以远离喧嚣，享受纯粹的海滨生活。"
+        }
+    },
+    {
+        name: "澳门",
+        tags: { sea: 1, chill: 6, lowHousePrice: -8, warm: 9, gaming: 10, portuguese: 10, edu: 7, medical: 8, blend: 10 },
+        displayTags: ["中西合璧", "娱乐之都", "文化遗产"],
+        desc: "你喜欢中西文化交融的独特氛围。澳门有丰富的葡萄牙文化遗产、繁华的娱乐业和独特的美食，适合喜欢多元文化、追求独特体验的你。",
+        detail: {
+            soul: "澳门与你热爱多元文化、追求独特体验的灵魂完美契合，这里是东西方文明的交汇点。",
+            life: "在大三巴牌坊感受历史，在赌场体验刺激，在葡式餐厅品尝美食，在路环享受宁静。",
+            culture: "中西文化交融，葡萄牙遗产丰富，娱乐业发达，多元而独特。",
+            highlight: "在澳门，你可以一天之内体验东方与西方的双重魅力。"
+        }
+    },
+    {
+        name: "大连",
+        tags: { sea: 9, chill: 7, lowHousePrice: 5, warm: 6, clean: 9, japanese: 8, edu: 8, medical: 8, football: 9 },
+        displayTags: ["北方明珠", "足球之城", "海滨浪漫"],
+        desc: "你喜欢北方海滨城市的清爽和浪漫。大连气候宜人，城市干净，有浓厚的足球文化和日俄建筑遗产，适合喜欢海洋运动的北方人。",
+        detail: {
+            soul: "大连与你热爱海洋、喜欢清爽的性格完美匹配，这里是北方的浪漫之都。",
+            life: "在星海广场散步，在老虎滩海洋公园游玩，在俄罗斯风情街感受异域文化，在足球场为球队呐喊。",
+            culture: "足球文化浓厚，日俄建筑遗产丰富，城市干净整洁，海洋文化浓郁。",
+            highlight: "在大连，海风中都带着浪漫的气息。"
+        }
+    },
+    {
+        name: "珠海",
+        tags: { sea: 10, chill: 9, lowHousePrice: -2, warm: 9, clean: 10, garden: 9, edu: 6, medical: 6, romantic: 9 },
+        displayTags: ["百岛之市", "宜居城市", "情侣路"],
+        desc: "你追求浪漫、干净的海滨生活环境。珠海以优美的海岸线、花园般的城市和悠闲的生活节奏著称，适合喜欢海洋、追求生活品质的你。",
+        detail: {
+            soul: "珠海与你追求浪漫、热爱自然的灵魂高度契合，这里是爱情与海洋的完美结合。",
+            life: "在情侣路骑行，在长隆海洋王国游玩，在野狸岛散步，在海边看日出日落。",
+            culture: "城市像花园一样美丽，生活节奏悠闲，浪漫气息浓厚，环境干净整洁。",
+            highlight: "在珠海，每一天都像在度蜜月。"
+        }
+    },
+    {
+        name: "无锡",
+        tags: { sea: -1, chill: 7, lowHousePrice: 4, warm: 7, garden: 9, industry: 8, edu: 7, medical: 7, taihu: 10 },
+        displayTags: ["太湖明珠", "工业强市", "江南水乡"],
+        desc: "你是追求精神自由的旅人。大理的苍山洱海、古城石板路和文艺气息，是逃离都市喧嚣的理想之地。这里适合数字游民、自由职业者，或者渴望在自然中寻找自我的你。",
+        detail: {
+            soul: "无锡与你既传统又现代、既重工业又重生活的灵魂完美匹配，这里是太湖边的明珠。",
+            life: "在鼋头渚欣赏太湖美景，在灵山感受佛教文化，在锡惠公园漫步，在工业园区奋斗。",
+            culture: "江南文化底蕴深厚，同时又是现代工业强市，传统与现代和谐共存。",
+            highlight: "在无锡，太湖的柔美与工业的刚强完美融合。"
+        }
+    }
+];
 
         // ================= 3. 问卷配置 =================
         const questions = [
-            {
-                title: "你的饮食偏好是？",
-                options: [
-                    { text: "无辣不欢，川湘渝菜系最爱", tags: { spicy: 10, food: 8 } },
-                    { text: "喜欢面食和北方菜系", tags: { heavyFood: 10, food: 8 } },
-                    { text: "偏爱清淡鲜甜的粤菜江浙菜", tags: { lightFood: 10, food: 8 } },
-                    { text: "什么都吃，喜欢尝试各地美食", tags: { food: 9, pragmatic: 8 } },
-                    { text: "健康饮食，沙拉轻食为主", tags: { foreign: 8, food: 6 } },
-                ],
-            },
-            {
-                title: "你对气候的偏好是？",
-                options: [
-                    { text: "喜欢温暖，讨厌冬天", tags: { warm: 10 } },
-                    { text: "喜欢四季分明，享受季节变化", tags: { seasons: 10 } },
-                    { text: "温和宜人，不要极端天气", tags: { seasons: 8, warm: 6 } },
-                    { text: "热带气候，常年夏天", tags: { warm: 10, sea: 5 } },
-                    { text: "不怕冷，喜欢雪景", tags: { cold: 10 } },
-                ],
-            },
-            {
-                title: "你理想的城市景观是？",
-                options: [
-                    { text: "现代摩天大楼，都市感强", tags: { modern: 10, hustle: 6 } },
-                    { text: "自然风光，山水湖海", tags: { nature: 10, chill: 6 } },
-                    { text: "历史古迹，文化底蕴深厚", tags: { history: 10, culture: 8 } },
-                    { text: "海滨城市，有沙滩海岸", tags: { sea: 10, romantic: 8 } },
-                    { text: "安静小镇，田园风光", tags: { slow: 10, chill: 8 } },
-                ],
-            },
-            {
-                title: "你的期望薪资水平是？",
-                options: [
-                    { text: "追求高薪，不怕加班", tags: { hustle: 10, highSalary: 10 } },
-                    { text: "中等偏上，工作生活平衡", tags: { hustle: 5, chill: 6 } },
-                    { text: "稳定即可，更看重其他方面", tags: { stable: 10, hustle: 3 } },
-                    { text: "自由职业，收入不稳定但自由", tags: { chill: 10, hustle: 2 } },
-                ],
-            },
-            {
-                title: "你的职业方向是？",
-                options: [
-                    { text: "互联网/科技行业", tags: { tech: 10, hustle: 8 } },
-                    { text: "体制内/公务员", tags: { gov: 10, stable: 10 } },
-                    { text: "金融/商业", tags: { finance: 10, hustle: 8 } },
-                    { text: "创意/文化/艺术", tags: { culture: 10, ent: 8 } },
-                    { text: "制造业/实体经济", tags: { manu: 10, stable: 8 } },
-                    { text: "自由职业/创业", tags: { business: 10, chill: 8 } },
-                ],
-            },
-            {
-                title: "你对房价的态度是？",
-                options: [
-                    { text: "必须买房，愿意承受高房价", tags: { lowHousePrice: -10, stable: 8 } },
-                    { text: "希望买房，但价格要合理", tags: { lowHousePrice: 5, stable: 6 } },
-                    { text: "租房也可，不被房贷束缚", tags: { chill: 8, lowHousePrice: 0 } },
-                    { text: "房价越低越好，生活成本最重要", tags: { lowHousePrice: 10, pragmatic: 8 } },
-                ],
-            },
-            {
-                title: "你的业余爱好主要是？",
-                options: [
-                    { text: "户外运动，爬山徒步", tags: { nature: 10, chill: 6 } },
-                    { text: "文化艺术，看展演出", tags: { culture: 10, ent: 8 } },
-                    { text: "美食探店，享受生活", tags: { food: 10, chill: 6 } },
-                    { text: "健身运动，保持健康", tags: { health: 10 } },
-                    { text: "宅家娱乐，游戏追剧", tags: { chill: 8, ent: 6 } },
-                ],
-            },
-            {
-                title: "你的社交偏好是？",
-                options: [
-                    { text: "喜欢社交，朋友越多越好", tags: { humanTouch: 10, ent: 8 } },
-                    { text: "注重边界，需要个人空间", tags: { boundaries: 10, chill: 6 } },
-                    { text: "有小圈子，深度交往", tags: { culture: 8, humanTouch: 6 } },
-                    { text: "工作社交为主，公私分明", tags: { efficiency: 10, boundaries: 6 } },
-                ],
-            },
-            {
-                title: "你对子女教育的重视程度？",
-                options: [
-                    { text: "非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
-                    { text: "比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
-                    { text: "顺其自然，健康快乐更重要", tags: { edu: 4, chill: 8 } },
-                    { text: "丁克或不考虑此问题", tags: { chill: 10, edu: 0 } },
-                ],
-            },
-            {
-                title: "你对医疗条件的要求是？",
-                options: [
-                    { text: "必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
-                    { text: "有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
-                    { text: "基本医疗能满足就行", tags: { medical: 4, chill: 6 } },
-                    { text: "年轻健康，不太关注", tags: { medical: 2, chill: 8 } },
-                ],
-            },
-            {
-                title: "你的人生追求主要是？",
-                options: [
-                    { text: "事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
-                    { text: "生活幸福，家庭和睦", tags: { stable: 10, chill: 8 } },
-                    { text: "体验世界，自由探索", tags: { chill: 10, foreign: 8 } },
-                    { text: "精神满足，追求艺术文化", tags: { culture: 10, ent: 8 } },
-                ],
-            },
-            {
-                title: "你能接受的通勤时间是？",
-                options: [
-                    { text: "30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
-                    { text: "1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
-                    { text: "越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
-                    { text: "不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
-                ],
-            },
-            {
-                title: "你的周末通常如何安排？",
-                options: [
-                    { text: "休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
-                    { text: "朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
-                    { text: "学习充电，提升自我", tags: { hustle: 8, culture: 6 } },
-                    { text: "周边旅行，探索新地方", tags: { nature: 8, chill: 6 } },
-                ],
-            },
-            {
-                title: "你对城市规模的偏好是？",
-                options: [
-                    { text: "超大城市，资源丰富", tags: { hustle: 10, modern: 8 } },
-                    { text: "一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
-                    { text: "中小城市，生活舒适", tags: { chill: 10, slow: 8 } },
-                    { text: "小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
-                ],
-            },
-            {
-                title: "你的消费观念是？",
-                options: [
-                    { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
-                    { text: "理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
-                    { text: "节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
-                    { text: "及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
-                ],
-            },
-            {
-                title: "你对夜生活的需求是？",
-                options: [
-                    { text: "丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
-                    { text: "偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
-                    { text: "基本没有，早睡早起", tags: { chill: 8, nightLife: -5 } },
-                    { text: "看心情，有选择地参与", tags: { pragmatic: 8, ent: 5 } },
-                ],
-            },
-            {
-                title: "你喜欢的居住区域是？",
-                options: [
-                    { text: "市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
-                    { text: "近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
-                    { text: "海边湖边，风景优美", tags: { sea: 10, nature: 8 } },
-                    { text: "老城区，有文化氛围", tags: { history: 10, culture: 8 } },
-                ],
-            },
-            {
-                title: "你的旅行偏好是？",
-                options: [
-                    { text: "国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
-                    { text: "国内深度游，探索各地", tags: { nature: 8, culture: 8 } },
-                    { text: "度假放松，享受酒店服务", tags: { chill: 10, sea: 6 } },
-                    { text: "城市漫步，感受当地生活", tags: { culture: 10, chill: 6 } },
-                ],
-            },
-            {
-                title: "你对宠物/植物的态度是？",
-                options: [
-                    { text: "养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
-                    { text: "喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
-                    { text: "有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
-                    { text: "公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
-                ],
-            },
-            {
-                title: "你希望未来的生活状态是？",
-                options: [
-                    { text: "持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
-                    { text: "工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
-                    { text: "回归自然，简单生活", tags: { chill: 10, nature: 8 } },
-                    { text: "自由创作，精神富足", tags: { culture: 10, chill: 8 } },
-                    { text: "家庭幸福，温馨美满", tags: { stable: 10, humanTouch: 8 } },
-                ],
-            },
-        ];
+    {
+        title: "心中最向往的城市景观是？",
+        options: [
+            { text: "现代摩天大楼，都市感十足", tags: { modern: 10, hustle: 6 } },
+            { text: "自然风光，山水湖海尽收眼底", tags: { nature: 10, chill: 6 } },
+            { text: "历史古迹，文化底蕴深厚", tags: { history: 10, culture: 8 } },
+            { text: "海滨城市，沙滩海岸触手可及", tags: { sea: 10, romantic: 8 } },
+            { text: "安静小镇，田园风光如诗如画", tags: { slow: 10, chill: 8 } },
+        ],
+    },
+    {
+        title: "关于气候，更向往哪种天气体验？",
+        options: [
+            { text: "温暖宜人，讨厌寒冷冬天", tags: { warm: 10 } },
+            { text: "四季分明，享受季节轮转之美", tags: { seasons: 10 } },
+            { text: "温和舒适，拒绝极端天气", tags: { seasons: 8, warm: 6 } },
+            { text: "热带风情，常年沐浴在阳光中", tags: { warm: 10, sea: 5 } },
+            { text: "不畏严寒，沉醉于冰雪世界", tags: { cold: 10 } },
+        ],
+    },
+    {
+        title: "当谈到美食时，你的口味更偏向于？",
+        options: [
+            { text: "辣！没有辣就吃不下饭", tags: { spicy: 10, food: 8 } },
+            { text: "面食爱好者，北方菜系忠实粉丝", tags: { heavyFood: 10, food: 8 } },
+            { text: "清淡饮食，鲜甜可口", tags: { lightFood: 10, food: 8 } },
+            { text: "健康饮食倡导者，沙拉轻食为主", tags: { foreign: 8, food: 6 } },
+            { text: "美食探险家，什么都想尝试", tags: { food: 9, pragmatic: 8 } },
+        ],
+    },
+    {
+        title: "空闲时间更愿意如何度过？",
+        options: [
+            { text: "户外运动，爬山徒步亲近自然", tags: { nature: 10, chill: 6 } },
+            { text: "文化艺术，看展演出提升修养", tags: { culture: 10, ent: 8 } },
+            { text: "美食探店，享受生活的美味", tags: { food: 10, chill: 6 } },
+            { text: "健身运动，保持健康和活力", tags: { health: 10 } },
+            { text: "宅家娱乐，游戏追剧放松身心", tags: { chill: 8, ent: 6 } },
+        ],
+    },
+    {
+        title: "在社交方面更倾向于？",
+        options: [
+            { text: "热衷社交，朋友越多越热闹", tags: { humanTouch: 10, ent: 8 } },
+            { text: "注重边界，需要足够的个人空间", tags: { boundaries: 10, chill: 6 } },
+            { text: "深度交往，有几个知己足矣", tags: { culture: 8, humanTouch: 6 } },
+            { text: "工作社交为主，公私分明", tags: { efficiency: 10, boundaries: 6 } },
+        ],
+    },
+    {
+        title: "对于薪资和工作强度的期待是？",
+        options: [
+            { text: "追求高薪，不怕加班和挑战", tags: { hustle: 10, highSalary: 10 } },
+            { text: "中等偏上，注重工作生活平衡", tags: { hustle: 5, chill: 6 } },
+            { text: "稳定即可，更看重其他生活品质", tags: { stable: 10, hustle: 3 } },
+            { text: "自由职业，收入灵活但时间自由", tags: { chill: 10, hustle: 2 } },
+        ],
+    },
+    {
+        title: "更倾向于哪种职业发展方向？",
+        options: [
+            { text: "互联网/科技行业", tags: { tech: 10, hustle: 8 } },
+            { text: "体制内/公务员", tags: { gov: 10, stable: 10 } },
+            { text: "金融/商业领域", tags: { finance: 10, hustle: 8 } },
+            { text: "创意/文化/艺术行业", tags: { culture: 10, ent: 8 } },
+            { text: "制造业/实体经济", tags: { manu: 10, stable: 8 } },
+            { text: "自由职业/创业", tags: { business: 10, chill: 8 } },
+        ],
+    },
+    {
+        title: "如何看待买房这件事？",
+        options: [
+            { text: "必须买房，愿意为理想住所承担高房价", tags: { lowHousePrice: -10, stable: 8 } },
+            { text: "希望买房，但追求性价比和合理价格", tags: { lowHousePrice: 5, stable: 6 } },
+            { text: "租房也不错，不愿被房贷束缚", tags: { chill: 8, lowHousePrice: 0 } },
+            { text: "房价越低越好，生活成本最重要", tags: { lowHousePrice: 10, pragmatic: 8 } },
+        ],
+    },
+    {
+        title: "对于子女教育持什么态度？",
+        options: [
+            { text: "非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
+            { text: "比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
+            { text: "顺其自然，健康快乐更重要", tags: { edu: 4, chill: 8 } },
+            { text: "丁克或不考虑此问题", tags: { chill: 10, edu: 0 } },
+        ],
+    },
+    {
+        title: "对医疗条件有什么要求？",
+        options: [
+            { text: "必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
+            { text: "有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
+            { text: "基本医疗能满足需求", tags: { medical: 4, chill: 6 } },
+            { text: "年轻健康，不太关注医疗资源", tags: { medical: 2, chill: 8 } },
+        ],
+    },
+    {
+        title: "能接受的通勤时间大概是？",
+        options: [
+            { text: "30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
+            { text: "1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
+            { text: "越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
+            { text: "不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
+        ],
+    },
+    {
+        title: "典型的周末如何安排？",
+        options: [
+            { text: "休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
+            { text: "朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
+            { text: "学习充电，提升自我", tags: { hustle: 8, culture: 6 } },
+            { text: "周边旅行，探索新地方", tags: { nature: 8, chill: 6 } },
+        ],
+    },
+    {
+        title: "更偏爱哪种规模的城市？",
+        options: [
+            { text: "超大城市，资源丰富机会多", tags: { hustle: 10, modern: 8 } },
+            { text: "一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
+            { text: "中小城市，生活舒适安逸", tags: { chill: 10, slow: 8 } },
+            { text: "小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
+        ],
+    },
+    {
+        title: "消费观念更接近哪一种？",
+        options: [
+            { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
+            { text: "理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
+            { text: "节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
+            { text: "及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
+        ],
+    },
+    {
+        title: "夜生活对你来说是？",
+        options: [
+            { text: "丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
+            { text: "偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
+            { text: "基本没有，早睡早起", tags: { chill: 8, nightLife: -5 } },
+            { text: "看心情，有选择地参与", tags: { pragmatic: 8, ent: 5 } },
+        ],
+    },
+    {
+        title: "人生的首要追求是什么？",
+        options: [
+            { text: "事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
+            { text: "生活幸福，家庭和睦美满", tags: { stable: 10, chill: 8 } },
+            { text: "体验世界，自由探索未知", tags: { chill: 10, foreign: 8 } },
+            { text: "精神满足，追求艺术文化", tags: { culture: 10, ent: 8 } },
+        ],
+    },
+    {
+        title: "理想的居住区域是？",
+        options: [
+            { text: "市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
+            { text: "近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
+            { text: "海边湖边，风景优美", tags: { sea: 10, nature: 8 } },
+            { text: "老城区，有文化氛围", tags: { history: 10, culture: 8 } },
+        ],
+    },
+    {
+        title: "旅行时更偏好哪种方式？",
+        options: [
+            { text: "国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
+            { text: "国内深度游，探索各地风土人情", tags: { nature: 8, culture: 8 } },
+            { text: "度假放松，享受酒店服务", tags: { chill: 10, sea: 6 } },
+            { text: "城市漫步，感受当地生活", tags: { culture: 10, chill: 6 } },
+        ],
+    },
+    {
+        title: "对于宠物或植物的态度是？",
+        options: [
+            { text: "养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
+            { text: "喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
+            { text: "有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
+            { text: "公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
+        ],
+    },
+    {
+        title: "希望未来的生活状态是怎样的？",
+        options: [
+            { text: "持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
+            { text: "工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
+            { text: "回归自然，简单生活", tags: { chill: 10, nature: 8 } },
+            { text: "自由创作，精神富足", tags: { culture: 10, chill: 8 } },
+            { text: "家庭幸福，温馨美满", tags: { stable: 10, humanTouch: 8 } },
+        ],
+    },
+];
 
         // ================= 4. 测试逻辑 =================
         function initQuiz() {
@@ -1520,121 +1696,7 @@
         }
 
         // ================= 8. 结果页面功能 =================
-        function saveResultAsImage() {
-            const resultScreen = document.getElementById("result-screen");
-            const buttons = document.querySelector('.result-actions');
-            const copyrightFooter = document.querySelector('.copyright-footer');
-            
-            // 临时隐藏按钮和版权信息
-            buttons.style.display = 'none';
-            copyrightFooter.style.display = 'none';
-            
-            // 添加捕获标记类
-            document.body.classList.add('capturing');
-            
-            // 设置html2canvas选项，确保正确截图
-            html2canvas(resultScreen, {
-                backgroundColor: document.body.classList.contains('dark-mode') ? '#0f172a' : '#f8fafc',
-                scale: 1.5,
-                useCORS: true,
-                logging: false,
-                allowTaint: true,
-                foreignObjectRendering: true,
-                width: resultScreen.offsetWidth,
-                height: resultScreen.scrollHeight,
-                x: resultScreen.offsetLeft,
-                y: resultScreen.offsetTop
-            }).then(canvas => {
-                // 恢复按钮和版权信息显示
-                buttons.style.display = 'flex';
-                copyrightFooter.style.display = 'block';
-                
-                // 移除捕获标记类
-                document.body.classList.remove('capturing');
-                
-                // 创建下载链接
-                const link = document.createElement('a');
-                link.download = `城市匹配结果-${document.getElementById('city-name').textContent}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                // 显示成功提示
-                showNotification('结果已保存为图片！');
-            }).catch(error => {
-                // 恢复按钮和版权信息显示
-                buttons.style.display = 'flex';
-                copyrightFooter.style.display = 'block';
-                document.body.classList.remove('capturing');
-                showNotification('保存失败，请重试');
-                console.error('保存图片失败:', error);
-            });
-        }
-
-        function showNotification(message) {
-            // 创建提示元素
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--accent);
-                color: white;
-                padding: 14px 24px;
-                border-radius: 10px;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-                z-index: 10000;
-                font-weight: 500;
-                font-family: 'Inter', sans-serif;
-                animation: fadeInOut 3s ease;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // 3秒后移除
-            setTimeout(() => {
-                notification.style.animation = 'fadeOut 0.5s ease';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 500);
-            }, 2500);
-        }
-
-        // 添加CSS动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInOut {
-                0% { opacity: 0; transform: translateY(-10px); }
-                10% { opacity: 1; transform: translateY(0); }
-                90% { opacity: 1; transform: translateY(0); }
-                100% { opacity: 0; transform: translateY(-10px); }
-            }
-            @keyframes fadeOut {
-                from { opacity: 1; }
-                to { opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        function restartTest() {
-            // 重置所有状态
-            currentStep = 0;
-            selectionHistory = [];
-            
-            // 隐藏结果页面
-            document.getElementById("result-screen").style.display = "none";
-            
-            // 显示开始页面
-            document.getElementById("start-screen").style.display = "flex";
-            
-            // 重置session标记，允许重新计数
-            sessionCounted = false;
-            
-            // 增加访问计数
-            updateVisitorCounter();
-        }
+        // 移除了保存结果和重新测试功能
 
         // ================= 9. 初始化 =================
         // 页面加载时显示访问计数器
