@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title> 发现属于你的流动的盛宴 </title>
+    <title>发现属于你的流动的盛宴</title>
     
     <!-- 暗色模式切换图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,8 +17,8 @@
     <style>
       /* ================= 变量定义 ================= */
       :root {
-        --primary: #6366f1;
-        --accent: #ec4899;
+        --primary: #10b981; /* 绿色主题 */
+        --accent: #34d399;  /* 浅绿色 */
         --bg: #f8fafc;
         --card: #ffffff;
         --text-main: #1e293b;
@@ -30,8 +30,8 @@
 
       /* 暗色模式变量 */
       .dark-mode {
-        --primary: #818cf8;
-        --accent: #f472b6;
+        --primary: #34d399;
+        --accent: #6ee7b7;
         --bg: #0f172a;
         --card: #1e293b;
         --text-main: #f1f5f9;
@@ -95,7 +95,7 @@
 
       .theme-toggle:hover {
         transform: rotate(30deg);
-        box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
       }
 
       /* ================= 验证码页面 ================= */
@@ -123,7 +123,7 @@
 
       .captcha-input:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
       }
 
       .captcha-btn {
@@ -135,7 +135,7 @@
         border-radius: 50px;
         cursor: pointer;
         font-weight: 600;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         transition: transform 0.2s;
       }
 
@@ -161,6 +161,20 @@
         color: var(--text-sub);
         font-size: 13px;
         margin: 0;
+      }
+
+      /* ================= 访问计数器 ================= */
+      .visitor-counter {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 12px;
+        color: var(--text-sub);
+        background: rgba(16, 185, 129, 0.1);
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        z-index: 1000;
       }
 
       /* ================= 进度条 ================= */
@@ -227,21 +241,49 @@
         transition: all 0.2s;
         display: flex;
         align-items: center;
+        justify-content: space-between;
         color: var(--text-main);
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        position: relative;
       }
 
       .option-btn:hover {
         border-color: var(--primary);
-        background-color: rgba(99, 102, 241, 0.1);
+        background-color: rgba(16, 185, 129, 0.1);
       }
 
       .option-btn.selected {
         border-color: var(--primary);
-        background-color: rgba(99, 102, 241, 0.15);
-        color: var(--primary);
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--text-main);
         font-weight: 600;
-        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+      }
+
+      /* 选中标记 - 右侧圆圈和√ */
+      .checkmark {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: all 0.2s;
+      }
+
+      .option-btn.selected .checkmark {
+        opacity: 1;
+        border-color: var(--primary);
+        background-color: var(--primary);
+      }
+
+      .checkmark::after {
+        content: "✓";
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
       }
 
       /* ================= 导航按钮 ================= */
@@ -285,12 +327,20 @@
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
         display: none;
       }
 
       .confirm-btn:active {
         transform: scale(0.98);
+      }
+
+      /* ================= 验证页面（结果页之前） ================= */
+      #verify-screen {
+        display: none;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
       }
 
       /* ================= 结果页面 ================= */
@@ -374,7 +424,7 @@
       }
 
       .city-link-btn:hover {
-        background-color: rgba(99, 102, 241, 0.1);
+        background-color: rgba(16, 185, 129, 0.1);
         color: var(--primary);
         border-color: var(--primary);
       }
@@ -382,7 +432,7 @@
       .city-link-btn.active {
         background-color: var(--primary);
         color: white;
-        box-shadow: 0 2px 5px rgba(99, 102, 241, 0.3);
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
       }
 
       /* ================= 结果页面按钮 ================= */
@@ -481,20 +531,20 @@
         <i class="fas fa-moon"></i>
     </button>
 
-    <!-- 验证码页面 -->
-    <div class="container" id="captcha-screen">
-        <div style="font-size: 50px; margin-bottom: 10px">✈️ </div>
+    <!-- 开始页面 -->
+    <div class="container" id="start-screen">
+        <div style="font-size: 50px; margin-bottom: 10px">✈️</div>
         <div class="header">
             <h1>开启旅程</h1>
             <p>灵魂，大地上的异乡者</p>
+            <div id="visitor-counter" class="visitor-counter">你是第1位旅客</div>
         </div>
-        <input type="tel" id="captcha-input" class="captcha-input" placeholder="请输入验证码" maxlength="4" />
-        <button class="captcha-btn" onclick="verifyCaptcha()">解锁报告</button>
-        <div id="error-msg" style="color: #ef4444; font-size: 13px; margin-top: 15px; display: none">验证码错误，请重试</div>
+        <button class="captcha-btn" onclick="startQuiz()">开始测试</button>
     </div>
 
     <!-- 主测试页面 -->
     <div class="container" id="quiz-app" style="display: none">
+        <div class="visitor-counter" id="quiz-visitor-counter"></div>
         <div class="header">
             <h1>发现属于你的流动的盛宴</h1>
             <p>每一位大地上的异乡者，都会有独属的灵魂栖居之所</p>
@@ -511,45 +561,59 @@
             <div style="margin-top: 15px; color: var(--text-sub)">正在发现你的灵魂栖居所</div>
         </div>
 
-        <div id="result-screen">
-            <div style="font-size: 40px"></div>
-            <div style="font-size: 13px; color: var(--text-sub); margin-top: 5px">你的灵魂栖居在</div>
-
-            <div class="result-city-name" id="city-name">--</div>
-            <div class="result-tag-cloud" id="city-tags"></div>
-
-            <div class="chart-container">
-                <canvas id="radarChart"></canvas>
-            </div>
-
-            <div class="result-desc" id="city-desc"></div>
-
-            <div class="plan-b">
-                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px; font-weight: 700">
-                    📋 其他匹配城市（点击切换）
-                </div>
-                <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 5px"></div>
-            </div>
-
-            <!-- 结果页面按钮 -->
-            <div class="result-actions">
-                <button class="result-btn save" onclick="saveResultAsImage()">
-                    <i class="fas fa-camera"></i> 保存结果
-                </button>
-                <button class="result-btn restart" onclick="restartTest()">
-                    <i class="fas fa-redo"></i> 重新测试
-                </button>
-            </div>
-        </div>
-
         <div class="action-bar" id="action-bar" style="display: none">
             <button class="nav-btn" id="prev-btn" onclick="prevStep()">← 上一题</button>
             <button class="confirm-btn" id="confirm-btn" onclick="confirmMultiSelection()">确认选择</button>
         </div>
     </div>
 
+    <!-- 验证页面（结果页之前） -->
+    <div class="container" id="verify-screen">
+        <div style="font-size: 50px; margin-bottom: 10px">🔐</div>
+        <div class="header">
+            <h1>解锁你的城市报告</h1>
+            <p>请输入验证码查看专属你的灵魂栖居地</p>
+        </div>
+        <input type="tel" id="verify-input" class="captcha-input" placeholder="请输入验证码" maxlength="4" />
+        <button class="captcha-btn" onclick="verifyForResult()">解锁报告</button>
+        <div id="verify-error-msg" style="color: #ef4444; font-size: 13px; margin-top: 15px; display: none">验证码错误，请重试</div>
+    </div>
+
+    <!-- 结果页面 -->
+    <div class="container" id="result-screen">
+        <div class="visitor-counter" id="result-visitor-counter"></div>
+        <div style="font-size: 40px"></div>
+        <div style="font-size: 13px; color: var(--text-sub); margin-top: 5px">你的灵魂栖居在</div>
+
+        <div class="result-city-name" id="city-name">--</div>
+        <div class="result-tag-cloud" id="city-tags"></div>
+
+        <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="result-desc" id="city-desc"></div>
+
+        <div class="plan-b">
+            <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px; font-weight: 700">
+                📋 其他匹配城市（点击切换）
+            </div>
+            <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 5px"></div>
+        </div>
+
+        <!-- 结果页面按钮 -->
+        <div class="result-actions">
+            <button class="result-btn save" onclick="saveResultAsImage()">
+                <i class="fas fa-camera"></i> 保存结果
+            </button>
+            <button class="result-btn restart" onclick="restartTest()">
+                <i class="fas fa-redo"></i> 重新测试
+            </button>
+        </div>
+    </div>
+
     <div class="copyright-footer">
-        该测试由Data Mining Lab提供 • 结果仅供参考<br />
+        该测试由Data Science Lab提供 • 结果仅供参考<br />
     </div>
 
     <script>
@@ -558,6 +622,7 @@
         let chartInstance = null;
         let currentStep = 0;
         let selectionHistory = [];
+        let visitorCount = localStorage.getItem('visitorCount') ? parseInt(localStorage.getItem('visitorCount')) : 0;
 
         // ================= 暗色模式切换 =================
         const themeToggle = document.getElementById('theme-toggle');
@@ -580,27 +645,36 @@
                 themeIcon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             }
-        });
-
-        // ================= 1. 验证码功能 =================
-        document.getElementById("captcha-input").addEventListener("keypress", function (e) {
-            if (e.key === "Enter") verifyCaptcha();
-        });
-
-        function verifyCaptcha() {
-            const input = document.getElementById("captcha-input");
-            const errorMsg = document.getElementById("error-msg");
             
-            if (input.value.trim() === correctCaptcha) {
-                document.getElementById("captcha-screen").style.display = "none";
-                document.getElementById("quiz-app").style.display = "flex";
-                initQuiz();
-            } else {
-                errorMsg.style.display = "block";
-                input.style.borderColor = "#ef4444";
-                input.value = "";
-                input.focus();
+            // 重新渲染雷达图以适应主题
+            if (chartInstance) {
+                chartInstance.destroy();
+                const city = cities.find(c => c.name === document.getElementById('city-name').textContent);
+                if (city) {
+                    const userScores = calculateUserScores();
+                    renderRadar(city, userScores);
+                }
             }
+        });
+
+        // ================= 访问计数器 =================
+        function updateVisitorCounter() {
+            visitorCount++;
+            localStorage.setItem('visitorCount', visitorCount);
+            
+            // 更新所有页面的计数器
+            const counterElements = document.querySelectorAll('.visitor-counter');
+            counterElements.forEach(el => {
+                el.textContent = `你是第${visitorCount}位旅客`;
+            });
+        }
+
+        // ================= 1. 开始测试功能 =================
+        function startQuiz() {
+            updateVisitorCounter();
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-app").style.display = "flex";
+            initQuiz();
         }
 
         // ================= 2. 城市数据库 =================
@@ -780,188 +854,188 @@
             {
                 title: "1/20 你的饮食偏好是？",
                 options: [
-                    { text: "🌶️ 无辣不欢，川湘渝菜系最爱", tags: { spicy: 10, food: 8 } },
-                    { text: "🍜 喜欢面食和北方菜系", tags: { heavyFood: 10, food: 8 } },
-                    { text: "🥟 偏爱清淡鲜甜的粤菜江浙菜", tags: { lightFood: 10, food: 8 } },
-                    { text: "🍲 什么都吃，喜欢尝试各地美食", tags: { food: 9, pragmatic: 8 } },
-                    { text: "🥗 健康饮食，沙拉轻食为主", tags: { foreign: 8, food: 6 } },
+                    { text: "无辣不欢，川湘渝菜系最爱", tags: { spicy: 10, food: 8 } },
+                    { text: "喜欢面食和北方菜系", tags: { heavyFood: 10, food: 8 } },
+                    { text: "偏爱清淡鲜甜的粤菜江浙菜", tags: { lightFood: 10, food: 8 } },
+                    { text: "什么都吃，喜欢尝试各地美食", tags: { food: 9, pragmatic: 8 } },
+                    { text: "健康饮食，沙拉轻食为主", tags: { foreign: 8, food: 6 } },
                 ],
             },
             {
                 title: "2/20 你对气候的偏好是？",
                 options: [
-                    { text: "☀️ 喜欢温暖，讨厌冬天", tags: { warm: 10 } },
-                    { text: "❄️ 喜欢四季分明，享受季节变化", tags: { seasons: 10 } },
-                    { text: "🌤️ 温和宜人，不要极端天气", tags: { seasons: 8, warm: 6 } },
-                    { text: "🏖️ 热带气候，常年夏天", tags: { warm: 10, sea: 5 } },
-                    { text: "🌨️ 不怕冷，喜欢雪景", tags: { cold: 10 } },
+                    { text: "喜欢温暖，讨厌冬天", tags: { warm: 10 } },
+                    { text: "喜欢四季分明，享受季节变化", tags: { seasons: 10 } },
+                    { text: "温和宜人，不要极端天气", tags: { seasons: 8, warm: 6 } },
+                    { text: "热带气候，常年夏天", tags: { warm: 10, sea: 5 } },
+                    { text: "不怕冷，喜欢雪景", tags: { cold: 10 } },
                 ],
             },
             {
                 title: "3/20 你理想的城市景观是？",
                 options: [
-                    { text: "🏙️ 现代摩天大楼，都市感强", tags: { modern: 10, hustle: 6 } },
-                    { text: "⛰️ 自然风光，山水湖海", tags: { nature: 10, chill: 6 } },
-                    { text: "🏯 历史古迹，文化底蕴深厚", tags: { history: 10, culture: 8 } },
-                    { text: "🌊 海滨城市，有沙滩海岸", tags: { sea: 10, romantic: 8 } },
-                    { text: "🏡 安静小镇，田园风光", tags: { slow: 10, chill: 8 } },
+                    { text: "现代摩天大楼，都市感强", tags: { modern: 10, hustle: 6 } },
+                    { text: "自然风光，山水湖海", tags: { nature: 10, chill: 6 } },
+                    { text: "历史古迹，文化底蕴深厚", tags: { history: 10, culture: 8 } },
+                    { text: "海滨城市，有沙滩海岸", tags: { sea: 10, romantic: 8 } },
+                    { text: "安静小镇，田园风光", tags: { slow: 10, chill: 8 } },
                 ],
             },
             {
                 title: "4/20 你的期望薪资水平是？",
                 options: [
-                    { text: "💰 追求高薪，不怕加班", tags: { hustle: 10, highSalary: 10 } },
-                    { text: "⚖️ 中等偏上，工作生活平衡", tags: { hustle: 5, chill: 6 } },
-                    { text: "💼 稳定即可，更看重其他方面", tags: { stable: 10, hustle: 3 } },
-                    { text: "🆓 自由职业，收入不稳定但自由", tags: { chill: 10, hustle: 2 } },
+                    { text: "追求高薪，不怕加班", tags: { hustle: 10, highSalary: 10 } },
+                    { text: "中等偏上，工作生活平衡", tags: { hustle: 5, chill: 6 } },
+                    { text: "稳定即可，更看重其他方面", tags: { stable: 10, hustle: 3 } },
+                    { text: "自由职业，收入不稳定但自由", tags: { chill: 10, hustle: 2 } },
                 ],
             },
             {
                 title: "5/20 你的职业方向是？",
                 options: [
-                    { text: "💻 互联网/科技行业", tags: { tech: 10, hustle: 8 } },
-                    { text: "🏛️ 体制内/公务员", tags: { gov: 10, stable: 10 } },
-                    { text: "💰 金融/商业", tags: { finance: 10, hustle: 8 } },
-                    { text: "🎨 创意/文化/艺术", tags: { culture: 10, ent: 8 } },
-                    { text: "🏭 制造业/实体经济", tags: { manu: 10, stable: 8 } },
-                    { text: "🆓 自由职业/创业", tags: { business: 10, chill: 8 } },
+                    { text: "互联网/科技行业", tags: { tech: 10, hustle: 8 } },
+                    { text: "体制内/公务员", tags: { gov: 10, stable: 10 } },
+                    { text: "金融/商业", tags: { finance: 10, hustle: 8 } },
+                    { text: "创意/文化/艺术", tags: { culture: 10, ent: 8 } },
+                    { text: "制造业/实体经济", tags: { manu: 10, stable: 8 } },
+                    { text: "自由职业/创业", tags: { business: 10, chill: 8 } },
                 ],
             },
             {
                 title: "6/20 你对房价的态度是？",
                 options: [
-                    { text: "🏠 必须买房，愿意承受高房价", tags: { lowHousePrice: -10, stable: 8 } },
-                    { text: "🏡 希望买房，但价格要合理", tags: { lowHousePrice: 5, stable: 6 } },
-                    { text: "🏘️ 租房也可，不被房贷束缚", tags: { chill: 8, lowHousePrice: 0 } },
-                    { text: "💰 房价越低越好，生活成本最重要", tags: { lowHousePrice: 10, pragmatic: 8 } },
+                    { text: "必须买房，愿意承受高房价", tags: { lowHousePrice: -10, stable: 8 } },
+                    { text: "希望买房，但价格要合理", tags: { lowHousePrice: 5, stable: 6 } },
+                    { text: "租房也可，不被房贷束缚", tags: { chill: 8, lowHousePrice: 0 } },
+                    { text: "房价越低越好，生活成本最重要", tags: { lowHousePrice: 10, pragmatic: 8 } },
                 ],
             },
             {
                 title: "7/20 你的业余爱好主要是？",
                 options: [
-                    { text: "⛰️ 户外运动，爬山徒步", tags: { nature: 10, chill: 6 } },
-                    { text: "🎭 文化艺术，看展演出", tags: { culture: 10, ent: 8 } },
-                    { text: "🍽️ 美食探店，享受生活", tags: { food: 10, chill: 6 } },
-                    { text: "🏋️ 健身运动，保持健康", tags: { health: 10 } },
-                    { text: "🎮 宅家娱乐，游戏追剧", tags: { chill: 8, ent: 6 } },
+                    { text: "户外运动，爬山徒步", tags: { nature: 10, chill: 6 } },
+                    { text: "文化艺术，看展演出", tags: { culture: 10, ent: 8 } },
+                    { text: "美食探店，享受生活", tags: { food: 10, chill: 6 } },
+                    { text: "健身运动，保持健康", tags: { health: 10 } },
+                    { text: "宅家娱乐，游戏追剧", tags: { chill: 8, ent: 6 } },
                 ],
             },
             {
                 title: "8/20 你的社交偏好是？",
                 options: [
-                    { text: "🤝 喜欢社交，朋友越多越好", tags: { humanTouch: 10, ent: 8 } },
-                    { text: "🙅 注重边界，需要个人空间", tags: { boundaries: 10, chill: 6 } },
-                    { text: "👥 有小圈子，深度交往", tags: { culture: 8, humanTouch: 6 } },
-                    { text: "💼 工作社交为主，公私分明", tags: { efficiency: 10, boundaries: 6 } },
+                    { text: "喜欢社交，朋友越多越好", tags: { humanTouch: 10, ent: 8 } },
+                    { text: "注重边界，需要个人空间", tags: { boundaries: 10, chill: 6 } },
+                    { text: "有小圈子，深度交往", tags: { culture: 8, humanTouch: 6 } },
+                    { text: "工作社交为主，公私分明", tags: { efficiency: 10, boundaries: 6 } },
                 ],
             },
             {
                 title: "9/20 你对子女教育的重视程度？",
                 options: [
-                    { text: "🎓 非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
-                    { text: "📚 比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
-                    { text: "👶 顺其自然，健康快乐更重要", tags: { edu: 4, chill: 8 } },
-                    { text: "🚫 丁克或不考虑此问题", tags: { chill: 10, edu: 0 } },
+                    { text: "非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
+                    { text: "比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
+                    { text: "顺其自然，健康快乐更重要", tags: { edu: 4, chill: 8 } },
+                    { text: "丁克或不考虑此问题", tags: { chill: 10, edu: 0 } },
                 ],
             },
             {
                 title: "10/20 你对医疗条件的要求是？",
                 options: [
-                    { text: "🏥 必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
-                    { text: "⚕️ 有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
-                    { text: "💊 基本医疗能满足就行", tags: { medical: 4, chill: 6 } },
-                    { text: "💪 年轻健康，不太关注", tags: { medical: 2, chill: 8 } },
+                    { text: "必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
+                    { text: "有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
+                    { text: "基本医疗能满足就行", tags: { medical: 4, chill: 6 } },
+                    { text: "年轻健康，不太关注", tags: { medical: 2, chill: 8 } },
                 ],
             },
             {
                 title: "11/20 你的人生追求主要是？",
                 options: [
-                    { text: "🚀 事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
-                    { text: "😌 生活幸福，家庭和睦", tags: { stable: 10, chill: 8 } },
-                    { text: "🌍 体验世界，自由探索", tags: { chill: 10, foreign: 8 } },
-                    { text: "🎨 精神满足，追求艺术文化", tags: { culture: 10, ent: 8 } },
+                    { text: "事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
+                    { text: "生活幸福，家庭和睦", tags: { stable: 10, chill: 8 } },
+                    { text: "体验世界，自由探索", tags: { chill: 10, foreign: 8 } },
+                    { text: "精神满足，追求艺术文化", tags: { culture: 10, ent: 8 } },
                 ],
             },
             {
                 title: "12/20 你能接受的通勤时间是？",
                 options: [
-                    { text: "🚇 30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
-                    { text: "🚗 1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
-                    { text: "🚲 越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
-                    { text: "⏰ 不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
+                    { text: "30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
+                    { text: "1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
+                    { text: "越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
+                    { text: "不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
                 ],
             },
             {
                 title: "13/20 你的周末通常如何安排？",
                 options: [
-                    { text: "🛌 休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
-                    { text: "🎉 朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
-                    { text: "📖 学习充电，提升自我", tags: { hustle: 8, culture: 6 } },
-                    { text: "🚗 周边旅行，探索新地方", tags: { nature: 8, chill: 6 } },
+                    { text: "休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
+                    { text: "朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
+                    { text: "学习充电，提升自我", tags: { hustle: 8, culture: 6 } },
+                    { text: "周边旅行，探索新地方", tags: { nature: 8, chill: 6 } },
                 ],
             },
             {
                 title: "14/20 你对城市规模的偏好是？",
                 options: [
-                    { text: "🏙️ 超大城市，资源丰富", tags: { hustle: 10, modern: 8 } },
-                    { text: "🏢 一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
-                    { text: "🏘️ 中小城市，生活舒适", tags: { chill: 10, slow: 8 } },
-                    { text: "🏡 小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
+                    { text: "超大城市，资源丰富", tags: { hustle: 10, modern: 8 } },
+                    { text: "一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
+                    { text: "中小城市，生活舒适", tags: { chill: 10, slow: 8 } },
+                    { text: "小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
                 ],
             },
             {
                 title: "15/20 你的消费观念是？",
                 options: [
-                    { text: "💸 注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
-                    { text: "💰 理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
-                    { text: "🛒 节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
-                    { text: "🎁 及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
+                    { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
+                    { text: "理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
+                    { text: "节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
+                    { text: "及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
                 ],
             },
             {
                 title: "16/20 你对夜生活的需求是？",
                 options: [
-                    { text: "🌃 丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
-                    { text: "🍸 偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
-                    { text: "🏮 基本没有，早睡早起", tags: { chill: 8, nightLife: -5 } },
-                    { text: "🎶 看心情，有选择地参与", tags: { pragmatic: 8, ent: 5 } },
+                    { text: "丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
+                    { text: "偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
+                    { text: "基本没有，早睡早起", tags: { chill: 8, nightLife: -5 } },
+                    { text: "看心情，有选择地参与", tags: { pragmatic: 8, ent: 5 } },
                 ],
             },
             {
                 title: "17/20 你喜欢的居住区域是？",
                 options: [
-                    { text: "🏙️ 市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
-                    { text: "🏡 近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
-                    { text: "🌊 海边湖边，风景优美", tags: { sea: 10, nature: 8 } },
-                    { text: "🏯 老城区，有文化氛围", tags: { history: 10, culture: 8 } },
+                    { text: "市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
+                    { text: "近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
+                    { text: "海边湖边，风景优美", tags: { sea: 10, nature: 8 } },
+                    { text: "老城区，有文化氛围", tags: { history: 10, culture: 8 } },
                 ],
             },
             {
                 title: "18/20 你的旅行偏好是？",
                 options: [
-                    { text: "✈️ 国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
-                    { text: "🚗 国内深度游，探索各地", tags: { nature: 8, culture: 8 } },
-                    { text: "🏖️ 度假放松，享受酒店服务", tags: { chill: 10, sea: 6 } },
-                    { text: "🚶 城市漫步，感受当地生活", tags: { culture: 10, chill: 6 } },
+                    { text: "国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
+                    { text: "国内深度游，探索各地", tags: { nature: 8, culture: 8 } },
+                    { text: "度假放松，享受酒店服务", tags: { chill: 10, sea: 6 } },
+                    { text: "城市漫步，感受当地生活", tags: { culture: 10, chill: 6 } },
                 ],
             },
             {
                 title: "19/20 你对宠物/植物的态度是？",
                 options: [
-                    { text: "🐶 养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
-                    { text: "🌿 喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
-                    { text: "🏡 有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
-                    { text: "🏢 公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
+                    { text: "养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
+                    { text: "喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
+                    { text: "有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
+                    { text: "公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
                 ],
             },
             {
                 title: "20/20 你希望未来的生活状态是？",
                 options: [
-                    { text: "🚀 持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
-                    { text: "⚖️ 工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
-                    { text: "🌿 回归自然，简单生活", tags: { chill: 10, nature: 8 } },
-                    { text: "🎨 自由创作，精神富足", tags: { culture: 10, chill: 8 } },
-                    { text: "👨‍👩‍👧 家庭幸福，温馨美满", tags: { stable: 10, humanTouch: 8 } },
+                    { text: "持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
+                    { text: "工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
+                    { text: "回归自然，简单生活", tags: { chill: 10, nature: 8 } },
+                    { text: "自由创作，精神富足", tags: { culture: 10, chill: 8 } },
+                    { text: "家庭幸福，温馨美满", tags: { stable: 10, humanTouch: 8 } },
                 ],
             },
         ];
@@ -973,6 +1047,9 @@
             renderQuestion(0);
             updateProgress();
             updateNavigation();
+            
+            // 更新访问计数器
+            updateVisitorCounter();
         }
 
         function renderQuestion(index) {
@@ -990,13 +1067,10 @@
             q.options.forEach((opt, optIndex) => {
                 const btn = document.createElement("button");
                 btn.className = "option-btn";
-                btn.innerHTML = opt.text;
-                
-                // 添加图标
-                const iconSpan = document.createElement("span");
-                iconSpan.className = "option-icon";
-                iconSpan.textContent = getIconForOption(optIndex);
-                btn.prepend(iconSpan);
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <div class="checkmark"></div>
+                `;
                 
                 btn.onclick = () => {
                     // 移除其他选项的选中状态
@@ -1016,18 +1090,14 @@
             updateNavigation();
         }
 
-        function getIconForOption(index) {
-            const icons = ["🔴", "🟠", "🟡", "🟢", "🔵", "🟣"];
-            return icons[index] || "⚪";
-        }
-
         function nextStep() {
             if (currentStep < questions.length - 1) {
                 currentStep++;
                 updateProgress();
                 renderQuestion(currentStep);
             } else {
-                calculateResult();
+                // 答题完成，显示验证页面
+                showVerifyScreen();
             }
         }
 
@@ -1052,7 +1122,39 @@
             prevBtn.disabled = currentStep === 0;
         }
 
-        // ================= 5. 匹配算法 =================
+        // ================= 5. 验证页面逻辑 =================
+        function showVerifyScreen() {
+            document.getElementById("quiz-app").style.display = "none";
+            document.getElementById("verify-screen").style.display = "flex";
+            
+            // 更新访问计数器
+            const verifyCounter = document.createElement("div");
+            verifyCounter.className = "visitor-counter";
+            verifyCounter.textContent = `你是第${visitorCount}位旅客`;
+            document.getElementById("verify-screen").appendChild(verifyCounter);
+            
+            // 添加回车键支持
+            document.getElementById("verify-input").addEventListener("keypress", function (e) {
+                if (e.key === "Enter") verifyForResult();
+            });
+        }
+
+        function verifyForResult() {
+            const input = document.getElementById("verify-input");
+            const errorMsg = document.getElementById("verify-error-msg");
+            
+            if (input.value.trim() === correctCaptcha) {
+                document.getElementById("verify-screen").style.display = "none";
+                calculateResult();
+            } else {
+                errorMsg.style.display = "block";
+                input.style.borderColor = "#ef4444";
+                input.value = "";
+                input.focus();
+            }
+        }
+
+        // ================= 6. 匹配算法 =================
         function calculateCityScores(userTags) {
             let candidates = JSON.parse(JSON.stringify(cities));
             
@@ -1078,7 +1180,7 @@
             return candidates;
         }
 
-        // ================= 6. 雷达图系统 =================
+        // ================= 7. 雷达图系统 =================
         const DIMENSIONS = {
             career: { label: "职业发展", tags: ["hustle", "tech", "finance", "business", "highSalary"] },
             life: { label: "节奏舒缓", tags: ["chill", "slow", "humanTouch", "stable"] },
@@ -1111,6 +1213,18 @@
             return scores;
         }
 
+        function calculateUserScores() {
+            let userScores = {};
+            selectionHistory.forEach(
+                (step) =>
+                    step &&
+                    step.forEach((t) => {
+                        for (let k in t) userScores[k] = (userScores[k] || 0) + t[k];
+                    })
+            );
+            return userScores;
+        }
+
         function renderRadar(city, userScores) {
             if (typeof Chart === "undefined") return;
             
@@ -1139,11 +1253,11 @@
                         {
                             label: "你的偏好",
                             data: userRadarValues,
-                            borderColor: "#6366f1",
-                            backgroundColor: "rgba(99, 102, 241, 0.2)",
+                            borderColor: "#10b981", // 绿色主题
+                            backgroundColor: "rgba(16, 185, 129, 0.2)",
                             borderWidth: 2,
                             pointBackgroundColor: "#fff",
-                            pointBorderColor: "#6366f1",
+                            pointBorderColor: "#10b981",
                         },
                     ],
                 },
@@ -1188,22 +1302,18 @@
             });
         }
 
-        // ================= 7. 结果计算 =================
+        // ================= 8. 结果计算 =================
         function calculateResult() {
             document.getElementById("quiz-container").style.display = "none";
             document.getElementById("action-bar").style.display = "none";
             document.getElementById("loading").style.display = "block";
+            
+            // 更新访问计数器
+            updateVisitorCounter();
 
             setTimeout(() => {
                 // 汇总用户得分
-                let userScores = {};
-                selectionHistory.forEach(
-                    (step) =>
-                        step &&
-                        step.forEach((t) => {
-                            for (let k in t) userScores[k] = (userScores[k] || 0) + t[k];
-                        })
-                );
+                const userScores = calculateUserScores();
 
                 // 计算城市匹配
                 const ranked = calculateCityScores(userScores);
@@ -1246,7 +1356,7 @@
             }, 1500);
         }
 
-        // ================= 8. 结果页面功能 =================
+        // ================= 9. 结果页面功能 =================
         function saveResultAsImage() {
             const resultScreen = document.getElementById("result-screen");
             const buttons = document.querySelector('.result-actions');
@@ -1330,19 +1440,27 @@
             currentStep = 0;
             selectionHistory = [];
             
-            // 切换回问卷页面
+            // 切换回开始页面
             document.getElementById("result-screen").style.display = "none";
-            document.getElementById("quiz-container").style.display = "block";
-            document.getElementById("action-bar").style.display = "flex";
+            document.getElementById("start-screen").style.display = "flex";
             
-            // 重新开始
-            initQuiz();
-            
-            // 滚动到顶部
-            document.getElementById("quiz-container").scrollTop = 0;
+            // 更新访问计数器
+            updateVisitorCounter();
         }
 
-        // ================= 9. 调试功能 =================
+        // ================= 10. 初始化 =================
+        // 页面加载时更新访问计数器
+        window.onload = function() {
+            updateVisitorCounter();
+            
+            // 初始化开始页面的计数器
+            const startCounter = document.createElement("div");
+            startCounter.className = "visitor-counter";
+            startCounter.textContent = `你是第${visitorCount}位旅客`;
+            document.getElementById("start-screen").appendChild(startCounter);
+        };
+
+        // ================= 11. 调试功能 =================
         // 为方便测试，可以快速跳转到结果页
         function devSkipToResult(cityName) {
             // 直接填充数据并跳转到结果页
@@ -1359,11 +1477,7 @@
             };
             
             // 直接显示结果
-            document.getElementById("captcha-screen").style.display = "none";
-            document.getElementById("quiz-app").style.display = "flex";
-            document.getElementById("quiz-container").style.display = "none";
-            document.getElementById("action-bar").style.display = "none";
-            document.getElementById("loading").style.display = "none";
+            document.getElementById("start-screen").style.display = "none";
             document.getElementById("result-screen").style.display = "block";
             
             document.getElementById("city-name").innerText = city.name;
