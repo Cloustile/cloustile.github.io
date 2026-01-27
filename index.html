@@ -841,7 +841,7 @@
     </div>
 
     <div class="copyright-footer">
-        该测试由<a href="https://www.xiaohongshu.com/user/profile/69194eaf000000003202a2eb?xsec_token=ABwolm2qNpWOzcQYtK7ZPcNynScR0kHFWthsfNlIPIwTQ%3D&xsec_source=pc_search">葡萄冰美式</a>提供 • 结果仅供参考<br />
+        该测试由<a href="https://www.xiaohongshu.com/user/profile/69194eaf000000003202a2eb?xsec_token=ABwolm2qNpWOzcQYtK7ZPcNynScR0kHFWthsfNlIPIwTQ%3D&xsec_source=pc_search">葡萄冰美式</a>提供 • All Rights Reserved <br />
     </div>
 
     <script>
@@ -944,7 +944,7 @@
     },
     {
         name: "上海",
-        tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
+        tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, hustle: 10,fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
         displayTags: ["国际魔都", "精致生活", "机遇之城"],
         desc: "你追求卓越，向往国际化、精致的生活方式。上海有最前沿的时尚、最多的职业机会和顶级的医疗教育资源。这里竞争激烈但回报丰厚，适合有野心的奋斗者。",
         detail: {
@@ -968,7 +968,7 @@
     },
     {
         name: "杭州",
-        tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
+        tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, hustle: 8, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
         displayTags: ["电商之都", "西湖美景", "数字之城"],
         desc: "你既想追求事业成功，又向往诗意生活。杭州是互联网和电商中心，同时拥有西湖美景和江南韵味。这里适合希望在科技行业发展的文艺青年。",
         detail: {
@@ -980,7 +980,7 @@
     },
     {
         name: "北京",
-        tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
+        tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3,hustle: 9, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
         displayTags: ["首都", "文化中心", "资源高地"],
         desc: "你追求顶级资源和宏大平台，能够承受快节奏和高压力。北京有最好的教育、医疗和文化资源，适合有雄心壮志、想在体制内或大平台发展的你。",
         detail: {
@@ -1357,10 +1357,10 @@
     {
         title: "能接受的通勤时间大概是？",
         options: [
-            { text: "30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
+            { text: "30分钟内，太远的工作不予考虑", tags: { chill: 8, hustle: 2 } },
             { text: "1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
-            { text: "越短越好，最好步行可达", tags: { chill: 8, efficiency: 6 } },
-            { text: "不介意通勤，可以远程工作", tags: { chill: 10, efficiency: 4 } },
+            { text: "只要工资足够多，1.5小时都能忍", tags: { hustle: 10, efficiency: 6 } },
+            { text: "不介意通勤，可以远程工作", tags: { chill: 8, efficiency: 4 } },
         ],
     },
     {
@@ -1377,14 +1377,14 @@
         options: [
             { text: "超大城市，资源丰富机会多", tags: { hustle: 10, modern: 8 } },
             { text: "一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
-            { text: "中小城市，生活舒适安逸", tags: { chill: 10, slow: 8 } },
+            { text: "中小城市，生活舒适安逸", tags: { chill: 8, slow: 8 } },
             { text: "小城小镇，宁静安逸", tags: { slow: 10, chill: 10 } },
         ],
     },
     {
         title: "消费观念更接近哪一种？",
         options: [
-            { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
+            { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 8 } },
             { text: "理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
             { text: "节俭为主，能省则省", tags: { lowHousePrice: 8, pragmatic: 8 } },
             { text: "及时行乐，享受当下", tags: { chill: 10, ent: 6 } },
@@ -1427,12 +1427,13 @@
         ],
     },
     {
-        title: "对于宠物或植物的态度是？",
+        title: "如果心情不好，你会怎么调节？",
         options: [
-            { text: "养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
-            { text: "喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
-            { text: "有院子最好，亲近自然", tags: { nature: 10, slow: 8 } },
-            { text: "公寓即可，简洁方便", tags: { modern: 8, efficiency: 6 } },
+            { text: "走进大自然，去爬山徒步看风景", tags: { nature: 10, chill: 6 } },
+            { text: "找朋友倾诉，聚会聊天寻求安慰", tags: { humanTouch: 10, ent: 8 } },
+            { text: "一个人安静独处，看书听音乐冥想", tags: { chill: 10, slow: 8 } },
+            { text: "享受美食，用味蕾治愈心情", tags: { food: 10, chill: 6 } },
+            { text: "逛街购物或看场电影转移注意力", tags: { fashion: 8, ent: 8 } },
         ],
     },
     {
