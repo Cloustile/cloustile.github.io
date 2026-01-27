@@ -8,8 +8,10 @@
     <!-- 暗色模式切换图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Chart.js -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@400;500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
     
     <!-- html2canvas 用于截图保存 -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -17,60 +19,111 @@
     <style>
       /* ================= 变量定义 ================= */
       :root {
-        --primary: #10b981; /* 绿色主题 */
-        --accent: #34d399;  /* 浅绿色 */
+        --primary: #1e293b;
+        --accent: #BE185D;
         --bg: #f8fafc;
         --card: #ffffff;
         --text-main: #1e293b;
         --text-sub: #64748b;
         --border: #e2e8f0;
-        --shadow: rgba(0, 0, 0, 0.15);
-        --grid-color: #e2e8f0;
+        --shadow: rgba(0, 0, 0, 0.08);
+        --grid-color: rgba(148, 163, 184, 0.1);
+        --glass-bg: rgba(255, 255, 255, 0.85);
+        --glass-border: rgba(255, 255, 255, 0.9);
       }
 
       /* 暗色模式变量 */
       .dark-mode {
-        --primary: #34d399;
-        --accent: #6ee7b7;
+        --primary: #f8fafc;
+        --accent: #F59E0B;
         --bg: #0f172a;
-        --card: #1e293b;
+        --card: rgba(20, 20, 20, 0.85);
         --text-main: #f1f5f9;
         --text-sub: #94a3b8;
-        --border: #334155;
-        --shadow: rgba(0, 0, 0, 0.4);
-        --grid-color: #334155;
+        --border: rgba(255, 255, 255, 0.15);
+        --shadow: rgba(0, 0, 0, 0.9);
+        --grid-color: rgba(30, 41, 59, 0.4);
+        --glass-bg: rgba(20, 20, 20, 0.85);
+        --glass-border: rgba(255, 255, 255, 0.15);
       }
 
       /* ================= 基础样式 ================= */
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background-color: var(--bg);
         color: var(--text-main);
         margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 0;
         min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
         background-image: 
-          linear-gradient(var(--grid-color) 1px, transparent 1px), 
-          linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-        background-size: 20px 20px;
-        transition: background-color 0.3s, color 0.3s;
+          radial-gradient(var(--grid-color) 1px, transparent 1px),
+          radial-gradient(var(--grid-color) 1px, transparent 1px);
+        background-size: 50px 50px, 80px 80px;
+        background-position: 0 0, 25px 25px;
+        transition: background-color 0.5s ease, color 0.5s ease;
       }
 
+      /* 浮动粒子效果 */
+      @keyframes float-particle {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.3; }
+        50% { transform: translate(15px, -25px) rotate(8deg); opacity: 0.7; }
+      }
+      
+      .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+        animation: float-particle 8s ease-in-out infinite;
+      }
+
+      /* 呼吸光效 */
+      @keyframes breathe {
+        0%, 100% { opacity: 0.8; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.02); }
+      }
+      
+      .animate-breathe { 
+        animation: breathe 4s infinite; 
+      }
+
+      /* 玻璃拟态容器 */
       .container {
         width: 90%;
         max-width: 500px;
-        background: var(--card);
-        padding: 30px;
+        background: var(--glass-bg);
+        padding: 40px 35px;
         border-radius: 24px;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         box-shadow: 0 25px 50px -12px var(--shadow);
         position: relative;
         overflow: hidden;
         display: flex;
         flex-direction: column;
         max-height: 95vh;
-        transition: background-color 0.3s, box-shadow 0.3s;
+        transition: all 0.5s ease;
+        margin: 20px auto;
+        z-index: 10;
+      }
+
+      /* 截图时的特殊样式 */
+      .capturing .container {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: white !important;
+        border: 1px solid #eee !important;
+      }
+      
+      .dark-mode .capturing .container {
+        background: #1a1a1a !important;
+        border: 1px solid #333 !important;
       }
 
       /* ================= 暗色模式切换按钮 ================= */
@@ -78,10 +131,10 @@
         position: absolute;
         top: 20px;
         right: 20px;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        background: var(--bg);
+        background: var(--glass-bg);
         border: 1px solid var(--border);
         color: var(--text-main);
         cursor: pointer;
@@ -89,13 +142,92 @@
         align-items: center;
         justify-content: center;
         font-size: 18px;
-        transition: all 0.3s;
+        transition: all 0.4s ease;
         z-index: 1000;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
 
       .theme-toggle:hover {
-        transform: rotate(30deg);
-        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        transform: rotate(30deg) scale(1.1);
+        box-shadow: 0 0 20px rgba(190, 24, 93, 0.3);
+      }
+
+      /* ================= 开始页面 ================= */
+      #start-screen {
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        min-height: 600px;
+      }
+
+      .start-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.9;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      }
+
+      .guide-text {
+        font-family: 'Noto Serif SC', serif;
+        font-size: 18px;
+        line-height: 1.8;
+        color: var(--text-sub);
+        margin: 25px 0 35px;
+        padding: 0 20px;
+        max-width: 400px;
+        font-weight: 400;
+      }
+
+      .guide-text span {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .start-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 16px 48px;
+        font-size: 16px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(30, 41, 59, 0.2);
+        margin-top: 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 暗色模式下开始按钮字体颜色为黑色 */
+      .dark-mode .start-btn {
+        color: black;
+      }
+
+      .start-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.5s;
+      }
+
+      .start-btn:hover::before {
+        left: 100%;
+      }
+
+      .start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(30, 41, 59, 0.3);
+      }
+
+      .start-btn:active {
+        transform: translateY(0);
       }
 
       /* ================= 验证码页面 ================= */
@@ -106,61 +238,72 @@
       }
 
       .captcha-input {
-        width: 50%;
-        padding: 15px;
-        font-size: 14px;
+        width: 60%;
+        padding: 16px;
+        font-size: 15px;
         text-align: center;
         border: 1px solid var(--border);
         border-radius: 12px;
-        margin: 20px 0;
+        margin: 25px 0;
         outline: none;
         letter-spacing: 5px;
-        color: var(--primary);
-        transition: all 0.3s;
-        background: var(--card);
+        background: rgba(255, 255, 255, 0.1);
         color: var(--text-main);
+        transition: all 0.3s;
+        font-weight: 500;
       }
 
       .captcha-input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.15);
+        background: rgba(255, 255, 255, 0.15);
       }
 
       .captcha-btn {
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         color: white;
         border: none;
-        padding: 12px 40px;
+        padding: 14px 45px;
         font-size: 16px;
         border-radius: 50px;
         cursor: pointer;
         font-weight: 600;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        transition: transform 0.2s;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        box-shadow: 0 6px 20px rgba(190, 24, 93, 0.25);
+      }
+
+      .captcha-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(190, 24, 93, 0.35);
       }
 
       .captcha-btn:active {
-        transform: scale(0.95);
+        transform: translateY(0);
       }
 
       /* ================= 头部区域 ================= */
       .header {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         flex-shrink: 0;
       }
 
       .header h1 {
-        font-size: 22px;
-        font-weight: 800;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 26px;
+        font-weight: 700;
         color: var(--text-main);
-        margin: 0 0 5px 0;
+        margin: 0 0 12px 0;
+        line-height: 1.3;
       }
 
       .header p {
         color: var(--text-sub);
-        font-size: 13px;
+        font-size: 14px;
         margin: 0;
+        font-weight: 400;
+        letter-spacing: 0.3px;
       }
 
       /* ================= 访问计数器 ================= */
@@ -170,28 +313,59 @@
         left: 20px;
         font-size: 12px;
         color: var(--text-sub);
-        background: rgba(16, 185, 129, 0.1);
-        padding: 4px 10px;
+        background: rgba(190, 24, 93, 0.1);
+        padding: 6px 12px;
         border-radius: 20px;
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(190, 24, 93, 0.2);
         z-index: 1000;
+        font-weight: 500;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
       }
 
       /* ================= 进度条 ================= */
+      .progress-container {
+        width: 100%;
+        margin-bottom: 30px;
+        flex-shrink: 0;
+      }
+
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .current-question {
+        color: var(--accent);
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+      }
+
+      .total-questions {
+        color: var(--text-sub);
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+      }
+
       .progress-bar {
         width: 100%;
-        height: 4px;
+        height: 6px;
         background: var(--border);
-        border-radius: 2px;
-        margin-bottom: 20px;
-        flex-shrink: 0;
+        border-radius: 3px;
+        overflow: hidden;
       }
 
       .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         width: 0%;
-        transition: width 0.3s ease;
+        transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border-radius: 3px;
       }
 
       /* ================= 问题区域 ================= */
@@ -209,7 +383,7 @@
 
       .question-card {
         display: none;
-        animation: fadeIn 0.3s ease;
+        animation: fadeIn 0.5s ease;
       }
 
       .question-card.active {
@@ -217,66 +391,74 @@
       }
 
       .question-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin: 25px 0 30px 0;
-        line-height: 1.4;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 30px 0;
+        line-height: 1.5;
         color: var(--text-main);
+        letter-spacing: 0.3px;
       }
 
       /* ================= 选项 ================= */
       .options-grid {
         display: grid;
-        gap: 10px;
+        gap: 12px;
       }
 
       .option-btn {
-        background: var(--card);
+        background: var(--glass-bg);
         border: 1px solid var(--border);
-        padding: 14px 16px;
-        border-radius: 12px;
+        padding: 18px 20px;
+        border-radius: 16px;
         text-align: left;
         cursor: pointer;
-        font-size: 14px;
-        transition: all 0.2s;
+        font-size: 15px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         justify-content: space-between;
         color: var(--text-main);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         position: relative;
+        overflow: hidden;
+        font-weight: 400;
       }
 
       .option-btn:hover {
-        border-color: var(--primary);
-        background-color: rgba(16, 185, 129, 0.1);
+        border-color: var(--accent);
+        background-color: rgba(190, 24, 93, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
       }
 
       .option-btn.selected {
-        border-color: var(--primary);
-        background-color: rgba(16, 185, 129, 0.15);
+        border-color: var(--accent);
+        background-color: rgba(190, 24, 93, 0.15);
         color: var(--text-main);
-        font-weight: 600;
-        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        font-weight: 500;
+        box-shadow: 0 0 0 3px rgba(190, 24, 93, 0.2);
+        transform: translateY(-1px);
       }
 
-      /* 选中标记 - 右侧圆圈和√ */
+      /* 选中标记 */
       .checkmark {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         border: 2px solid var(--border);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
       }
 
       .option-btn.selected .checkmark {
         opacity: 1;
-        border-color: var(--primary);
-        background-color: var(--primary);
+        border-color: var(--accent);
+        background-color: var(--accent);
       }
 
       .checkmark::after {
@@ -288,29 +470,34 @@
 
       /* ================= 导航按钮 ================= */
       .action-bar {
-        margin-top: 20px;
+        margin-top: 30px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-top: 10px;
+        padding-top: 20px;
         border-top: 1px solid var(--border);
         flex-shrink: 0;
       }
 
       .nav-btn {
         border: none;
-        background: none;
+        background: rgba(148, 163, 184, 0.1);
         color: var(--text-sub);
         font-size: 14px;
         cursor: pointer;
-        padding: 8px 15px;
-        border-radius: 8px;
-        transition: background 0.2s;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
 
-      .nav-btn:hover {
-        background: rgba(148, 163, 184, 0.1);
+      .nav-btn:hover:not(:disabled) {
+        background: rgba(148, 163, 184, 0.2);
         color: var(--text-main);
+        transform: translateY(-1px);
       }
 
       .nav-btn:disabled {
@@ -318,24 +505,33 @@
         cursor: not-allowed;
       }
 
-      .confirm-btn {
-        background: var(--primary);
+      .next-btn {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         color: white;
         border: none;
-        padding: 10px 24px;
+        padding: 12px 28px;
         border-radius: 20px;
         font-size: 14px;
         font-weight: 600;
         cursor: pointer;
-        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
-        display: none;
+        box-shadow: 0 6px 20px rgba(190, 24, 93, 0.25);
+        transition: all 0.3s;
+        letter-spacing: 0.5px;
+        margin-left: auto;
       }
 
-      .confirm-btn:active {
-        transform: scale(0.98);
+      .next-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(190, 24, 93, 0.35);
       }
 
-      /* ================= 验证页面（结果页之前） ================= */
+      .next-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--border);
+      }
+
+      /* ================= 验证页面 ================= */
       #verify-screen {
         display: none;
         text-align: center;
@@ -353,119 +549,178 @@
       }
 
       .result-city-name {
-        font-size: 48px;
-        font-weight: 900;
+        font-family: 'Cinzel', serif;
+        font-size: 52px;
+        font-weight: 700;
         background: linear-gradient(135deg, var(--primary), var(--accent));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin: 5px 0 10px;
-        letter-spacing: 2px;
+        background-clip: text;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+        margin: 10px 0 15px;
+        letter-spacing: 1px;
+        line-height: 1.1;
+        display: inline-block;
       }
 
       .result-tag-cloud {
         display: flex;
         justify-content: center;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: wrap;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
       }
 
       .result-tag {
         background: rgba(148, 163, 184, 0.1);
         color: var(--text-sub);
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 13px;
         font-weight: 600;
         border: 1px solid var(--border);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
       }
 
-      .chart-container {
-        position: relative;
-        height: 250px;
-        width: 100%;
-        margin: 10px 0 20px 0;
-        display: block;
+      .city-detail-container {
+        margin: 25px 0 30px;
+        text-align: left;
+        padding: 25px;
+        background: var(--glass-bg);
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      }
+
+      .detail-section {
+        margin-bottom: 25px;
+      }
+
+      .detail-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .detail-title {
+        font-family: 'Noto Serif SC', serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .detail-title i {
+        color: var(--accent);
+      }
+
+      .detail-content {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--text-sub);
+      }
+
+      .highlight-box {
+        background: rgba(190, 24, 93, 0.08);
+        border-left: 4px solid var(--accent);
+        padding: 16px 20px;
+        border-radius: 0 8px 8px 0;
+        margin: 20px 0;
+      }
+
+      .highlight-text {
+        font-family: 'Noto Serif SC', serif;
+        font-size: 16px;
+        font-style: italic;
+        color: var(--text-main);
+        line-height: 1.6;
       }
 
       .result-desc {
-        font-size: 14px;
-        line-height: 1.7;
+        font-size: 15px;
+        line-height: 1.8;
         color: var(--text-sub);
-        background: rgba(148, 163, 184, 0.05);
         padding: 15px;
-        border-radius: 16px;
+        border-radius: 12px;
         text-align: left;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        background: rgba(148, 163, 184, 0.05);
         border: 1px solid var(--border);
       }
 
       .plan-b {
-        background: var(--card);
+        background: var(--glass-bg);
         border: 1px dashed var(--border);
-        padding: 15px;
-        border-radius: 12px;
-        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 16px;
+        margin-bottom: 30px;
         text-align: left;
       }
 
       .city-link-btn {
         display: inline-block;
         margin: 5px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         background-color: rgba(148, 163, 184, 0.1);
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
-        font-size: 13px;
+        font-size: 14px;
         color: var(--text-sub);
         font-weight: 600;
         border: 1px solid transparent;
-        transition: all 0.2s;
+        transition: all 0.3s;
       }
 
       .city-link-btn:hover {
-        background-color: rgba(16, 185, 129, 0.1);
-        color: var(--primary);
-        border-color: var(--primary);
+        background-color: rgba(190, 24, 93, 0.1);
+        color: var(--accent);
+        border-color: rgba(190, 24, 93, 0.3);
+        transform: translateY(-2px);
       }
 
       .city-link-btn.active {
-        background-color: var(--primary);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         color: white;
-        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 4px 12px rgba(190, 24, 93, 0.25);
+        border-color: transparent;
       }
 
       /* ================= 结果页面按钮 ================= */
       .result-actions {
         display: flex;
-        gap: 10px;
+        gap: 15px;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 30px;
         flex-wrap: wrap;
       }
 
       .result-btn {
-        background: var(--card);
+        background: var(--glass-bg);
         border: 1px solid var(--border);
         color: var(--text-main);
-        padding: 10px 20px;
-        border-radius: 12px;
+        padding: 14px 28px;
+        border-radius: 14px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 600;
         display: flex;
         align-items: center;
-        gap: 8px;
-        transition: all 0.2s;
+        gap: 10px;
+        transition: all 0.3s;
+        min-width: 160px;
+        justify-content: center;
       }
 
       .result-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
       }
 
       .result-btn.save {
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         color: white;
         border: none;
       }
@@ -478,17 +733,17 @@
       #loading {
         display: none;
         text-align: center;
-        padding: 40px;
+        padding: 60px 40px;
       }
 
       .loading-spinner {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         border: 3px solid var(--border);
-        border-top-color: var(--primary);
+        border-top-color: var(--accent);
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 20px;
+        animation: spin 1.2s linear infinite;
+        margin: 0 auto 25px;
       }
 
       @keyframes spin {
@@ -498,7 +753,7 @@
       @keyframes fadeIn {
         from {
           opacity: 0;
-          transform: translateY(5px);
+          transform: translateY(10px);
         }
         to {
           opacity: 1;
@@ -521,8 +776,14 @@
         z-index: 9999;
         user-select: none;
         -webkit-user-select: none;
-        transition: background-color 0.3s, color 0.3s;
+        transition: background-color 0.5s, color 0.5s;
+        font-family: 'Inter', sans-serif;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
       }
+
+      /* 隐藏Vue加载完成前的元素 */
+      [v-cloak] { display: none; }
     </style>
 </head>
 <body>
@@ -533,25 +794,40 @@
 
     <!-- 开始页面 -->
     <div class="container" id="start-screen">
-        <div style="font-size: 50px; margin-bottom: 10px">✈️</div>
+        <div class="start-icon">✈️</div>
         <div class="header">
-            <h1>开启旅程</h1>
+            <h1>发现属于你的流动的盛宴</h1>
             <p>灵魂，大地上的异乡者</p>
             <div id="visitor-counter" class="visitor-counter">你是第1位旅客</div>
         </div>
-        <button class="captcha-btn" onclick="startQuiz()">开始测试</button>
+        
+        <div class="guide-text">
+          欢迎，远方的旅人。在这个流动的时代，每个人都渴望找到属于自己的栖居之所。<br><br>
+          本测试将通过<span>20个问题</span>，探索你的生活方式、价值取向与内心渴望，为你匹配最契合灵魂气质的城市。<br><br>
+          回答时请遵从你的<span>第一直觉</span>——真实的感受往往藏在瞬间的闪念中。
+        </div>
+        
+        <button class="start-btn animate-breathe" onclick="startQuiz()">
+          开启旅程 →
+        </button>
     </div>
 
     <!-- 主测试页面 -->
     <div class="container" id="quiz-app" style="display: none">
         <div class="visitor-counter" id="quiz-visitor-counter"></div>
         <div class="header">
-            <h1>发现属于你的流动的盛宴</h1>
+            <h1>流动的盛宴</h1>
             <p>每一位大地上的异乡者，都会有独属的灵魂栖居之所</p>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress"></div>
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="current-question" id="current-question">1</span>
+                <span class="total-questions" id="total-questions">/20</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
         </div>
 
         <div id="quiz-container"></div>
@@ -562,14 +838,14 @@
         </div>
 
         <div class="action-bar" id="action-bar" style="display: none">
-            <button class="nav-btn" id="prev-btn" onclick="prevStep()">← 上一题</button>
-            <button class="confirm-btn" id="confirm-btn" onclick="confirmMultiSelection()">确认选择</button>
+            <button class="nav-btn" id="prev-btn" onclick="prevStep()"><i class="fas fa-arrow-left"></i> 上一题</button>
+            <button class="next-btn" id="next-btn" onclick="nextStep()" disabled>下一题 →</button>
         </div>
     </div>
 
     <!-- 验证页面（结果页之前） -->
     <div class="container" id="verify-screen">
-        <div style="font-size: 50px; margin-bottom: 10px">🔐</div>
+        <div style="font-size: 50px; margin-bottom: 15px">🔐</div>
         <div class="header">
             <h1>解锁你的城市报告</h1>
             <p>请输入验证码查看专属你的灵魂栖居地</p>
@@ -583,22 +859,38 @@
     <div class="container" id="result-screen">
         <div class="visitor-counter" id="result-visitor-counter"></div>
         <div style="font-size: 40px"></div>
-        <div style="font-size: 13px; color: var(--text-sub); margin-top: 5px">你的灵魂栖居在</div>
+        <div style="font-size: 14px; color: var(--text-sub); margin-top: 5px; letter-spacing: 1px">你的灵魂栖居在</div>
 
         <div class="result-city-name" id="city-name">--</div>
         <div class="result-tag-cloud" id="city-tags"></div>
 
-        <div class="chart-container">
-            <canvas id="radarChart"></canvas>
+        <!-- 城市详细描述区域 -->
+        <div class="city-detail-container" id="city-detail-container">
+            <div class="detail-section">
+                <div class="detail-title"><i class="fas fa-heart"></i> 灵魂契合度</div>
+                <div class="detail-content" id="soul-match">这座城市与你内心渴望的生活方式高度契合。无论是生活节奏、文化氛围还是自然环境，都呼应着你潜意识中的向往。</div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-title"><i class="fas fa-compass"></i> 生活图景</div>
+                <div class="detail-content" id="life-scene">清晨的市井烟火，午后的闲适时光，夜晚的万家灯火——在这里，每一天都像精心编排的诗篇，既有日常的温暖，也有远方的诗意。</div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="detail-title"><i class="fas fa-users"></i> 人文氛围</div>
+                <div class="detail-content" id="culture-scene">这座城市的人们有着与你相似的生活态度和价值取向。在这里，你可以找到志同道合的伙伴，也能在陌生中感受到熟悉的温暖。</div>
+            </div>
+            
+            <div class="highlight-box">
+                <div class="highlight-text" id="city-highlight">这是一座能够安放你灵魂的城市，在这里，你不是过客，而是归人。</div>
+            </div>
         </div>
 
-        <div class="result-desc" id="city-desc"></div>
-
         <div class="plan-b">
-            <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 10px; font-weight: 700">
-                📋 其他匹配城市（点击切换）
+            <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px">
+                <i class="fas fa-map-marker-alt"></i> 其他匹配城市（点击切换）
             </div>
-            <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 5px"></div>
+            <div id="second-options-container" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center"></div>
         </div>
 
         <!-- 结果页面按钮 -->
@@ -619,10 +911,28 @@
     <script>
         // ================= 全局变量 =================
         const correctCaptcha = "0000"; // 验证码
-        let chartInstance = null;
         let currentStep = 0;
         let selectionHistory = [];
         let visitorCount = localStorage.getItem('visitorCount') ? parseInt(localStorage.getItem('visitorCount')) : 0;
+        let sessionCounted = false; // 标记当前会话是否已计数
+        
+        // 创建浮动粒子效果
+        function createParticles() {
+            const colors = ['#BE185D', '#1e293b', '#64748b'];
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.width = Math.random() * 3 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = Math.random() * 10 + 8 + 's';
+                document.body.appendChild(particle);
+            }
+        }
 
         // ================= 暗色模式切换 =================
         const themeToggle = document.getElementById('theme-toggle');
@@ -645,33 +955,26 @@
                 themeIcon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             }
-            
-            // 重新渲染雷达图以适应主题
-            if (chartInstance) {
-                chartInstance.destroy();
-                const city = cities.find(c => c.name === document.getElementById('city-name').textContent);
-                if (city) {
-                    const userScores = calculateUserScores();
-                    renderRadar(city, userScores);
-                }
-            }
         });
 
         // ================= 访问计数器 =================
         function updateVisitorCounter() {
-            visitorCount++;
-            localStorage.setItem('visitorCount', visitorCount);
-            
-            // 更新所有页面的计数器
-            const counterElements = document.querySelectorAll('.visitor-counter');
-            counterElements.forEach(el => {
-                el.textContent = `你是第${visitorCount}位旅客`;
-            });
+            // 只在页面加载时增加一次计数
+            if (!sessionCounted) {
+                visitorCount++;
+                localStorage.setItem('visitorCount', visitorCount);
+                sessionCounted = true;
+                
+                // 更新所有页面的计数器显示
+                const counterElements = document.querySelectorAll('.visitor-counter');
+                counterElements.forEach(el => {
+                    el.textContent = `你是第${visitorCount}位旅客`;
+                });
+            }
         }
 
         // ================= 1. 开始测试功能 =================
         function startQuiz() {
-            updateVisitorCounter();
             document.getElementById("start-screen").style.display = "none";
             document.getElementById("quiz-app").style.display = "flex";
             initQuiz();
@@ -684,175 +987,103 @@
                 tags: { sea: -1, chill: 10, lowHousePrice: 8, warm: 8, nature: 10, slow: 10, edu: 2, medical: 2, romantic: 9 },
                 displayTags: ["风花雪月", "慢生活", "文艺青年"],
                 desc: "你是追求精神自由的旅人。大理的苍山洱海、古城石板路和文艺气息，是逃离都市喧嚣的理想之地。这里适合数字游民、自由职业者，或者渴望在自然中寻找自我的你。",
+                detail: {
+                    soul: "大理与你向往自由、追求精神独立的灵魂高度契合。这里的慢节奏和自然风光能治愈都市带来的疲惫。",
+                    life: "清晨在洱海边散步，下午在古城咖啡馆读书，夜晚在人民路听民谣。生活在这里不是生存，而是体验。",
+                    culture: "聚集了全国各地的文艺青年、数字游民和自由职业者，形成了独特的社群文化，包容而开放。",
+                    highlight: "在大理，时间不是金钱，而是可以细细品味的礼物。"
+                }
             },
             {
                 name: "成都",
                 tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 6, spicy: 10, ent: 10, edu: 8, medical: 9, food: 10 },
                 displayTags: ["天府之国", "美食之都", "巴适生活"],
                 desc: "你懂得享受生活，追求工作与生活的平衡。成都有顶级医疗资源（华西医院）、丰富的美食和悠闲的生活节奏。这里包容开放，既有发展机会，也有打麻将喝茶的闲适。",
+                detail: {
+                    soul: "成都与你'巴适得板'的生活态度完美匹配。懂得享受当下，又不忘奋斗的意义。",
+                    life: "早上茶馆一碗盖碗茶，中午火锅串串香，下午公园晒太阳，晚上九眼桥小酒馆。",
+                    culture: "成都人乐观豁达，'安逸'不是懒散，而是对生活品质的追求。这里新旧交融，传统与时尚并存。",
+                    highlight: "在成都，奋斗是为了更好的生活，而生活本身已是享受。"
+                }
             },
             {
                 name: "上海",
                 tags: { sea: -1, chill: 3, lowHousePrice: -10, warm: 6, fashion: 10, finance: 10, edu: 10, medical: 10, modern: 10 },
                 displayTags: ["国际魔都", "精致生活", "机遇之城"],
                 desc: "你追求卓越，向往国际化、精致的生活方式。上海有最前沿的时尚、最多的职业机会和顶级的医疗教育资源。这里竞争激烈但回报丰厚，适合有野心的奋斗者。",
+                detail: {
+                    soul: "上海与你追求卓越、向往国际化的灵魂深度共鸣。这里是实现梦想的舞台。",
+                    life: "外滩的璀璨夜景，法租界的梧桐街道，新天地的时尚潮流——上海的魅力无处不在。",
+                    culture: "中西文化交融，海纳百川，既有历史的厚重，又有未来的先锋。",
+                    highlight: "在上海，每一天都是与世界对话的机会。"
+                }
             },
             {
                 name: "重庆",
                 tags: { sea: -1, chill: 7, lowHousePrice: 8, warm: 8, spicy: 10, mountains: 10, edu: 7, medical: 8, nightLife: 9 },
                 displayTags: ["山城", "火锅之都", "8D魔幻"],
                 desc: "你性格直爽，喜欢有特色的城市景观和热辣的生活。重庆的立体交通、夜景和火锅文化独具魅力。这里人热情豪爽，生活成本相对较低，适合喜欢烟火气的你。",
+                detail: {
+                    soul: "重庆与你直爽热情的性格完美契合，这里的生活就像火锅一样热辣鲜活。",
+                    life: "穿梭在8D魔幻的立体交通中，从洪崖洞的夜景到南山一棵树的俯瞰，每一天都充满惊喜。",
+                    culture: "江湖气息浓厚，人们直爽热情，生活节奏张弛有度，既有都市的繁华，也有人间的烟火。",
+                    highlight: "在重庆，生活就像爬坡上坎，虽然辛苦，但风景独好。"
+                }
             },
             {
                 name: "杭州",
                 tags: { sea: -1, chill: 5, lowHousePrice: -5, warm: 7, ecom: 10, garden: 9, edu: 9, medical: 8, tech: 9 },
                 displayTags: ["电商之都", "西湖美景", "数字之城"],
                 desc: "你既想追求事业成功，又向往诗意生活。杭州是互联网和电商中心，同时拥有西湖美景和江南韵味。这里适合希望在科技行业发展的文艺青年。",
+                detail: {
+                    soul: "杭州与你既追求事业又向往诗意的双重特质完美匹配，这里是科技与人文的交汇点。",
+                    life: "早晨在西溪湿地晨跑，白天在互联网公司奋斗，傍晚在西湖边散步，周末去龙井村品茶。",
+                    culture: "既有江南水乡的温婉，又有数字经济的活力，古典与现代在这里和谐共生。",
+                    highlight: "在杭州，你可以左手代码，右手诗篇，生活与梦想从不冲突。"
+                }
             },
             {
                 name: "北京",
                 tags: { sea: -1, chill: 2, lowHousePrice: -10, warm: 3, gov: 10, culture: 10, edu: 10, medical: 10, history: 10 },
                 displayTags: ["首都", "文化中心", "资源高地"],
                 desc: "你追求顶级资源和宏大平台，能够承受快节奏和高压力。北京有最好的教育、医疗和文化资源，适合有雄心壮志、想在体制内或大平台发展的你。",
+                detail: {
+                    soul: "北京与你追求卓越、志存高远的灵魂深度契合，这里是实现宏大梦想的地方。",
+                    life: "故宫的红墙黄瓦，胡同的市井生活，CBD的摩天大楼——北京包容着所有的可能性。",
+                    culture: "文化底蕴深厚，教育资源顶尖，机遇与挑战并存，适合有野心和韧性的奋斗者。",
+                    highlight: "在北京，你可以触摸历史的脉搏，也可以参与未来的创造。"
+                }
             },
             {
                 name: "深圳",
                 tags: { sea: 1, chill: 2, lowHousePrice: -8, warm: 9, tech: 10, hustle: 10, edu: 7, medical: 8, young: 10 },
                 displayTags: ["创新之都", "青春之城", "搞钱第一"],
                 desc: "你是充满活力的奋斗者，追求效率、创新和高收入。深圳年轻、开放、充满机会，适合想在科技、金融领域快速发展的年轻人。",
+                detail: {
+                    soul: "深圳与你追求创新、渴望突破的灵魂高度契合，这里是年轻梦想家的乐园。",
+                    life: "从华强北的电子市场到南山科技园的写字楼，从大梅沙的海滩到欢乐谷的游乐场，深圳永远充满活力。",
+                    culture: "平均年龄32岁，移民城市，包容开放，'时间就是金钱，效率就是生命'是这里的信条。",
+                    highlight: "在深圳，每一天都是新的开始，每一个梦想都值得被尊重。"
+                }
             },
             {
                 name: "西安",
                 tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 5, history: 10, heavyFood: 9, edu: 9, medical: 8, culture: 9 },
                 displayTags: ["古都", "碳水天堂", "文化底蕴"],
                 desc: "你热爱历史和文化，喜欢有厚重感的城市。西安有深厚的历史底蕴、丰富的美食和相对较低的生活成本，适合喜欢传统文化又希望有现代便利的你。",
-            },
-            {
-                name: "广州",
-                tags: { sea: -1, chill: 6, lowHousePrice: -3, warm: 9, lightFood: 10, trade: 10, edu: 9, medical: 9, pragmatic: 10 },
-                displayTags: ["美食天堂", "务实之城", "商贸之都"],
-                desc: "你务实低调，注重生活品质和美食体验。广州生活气息浓厚，医疗教育资源优秀，房价相对一线城市更友好，适合追求性价比的务实派。",
-            },
-            {
-                name: "长沙",
-                tags: { sea: -1, chill: 8, lowHousePrice: 8, warm: 7, spicy: 9, ent: 10, edu: 8, medical: 8, nightLife: 10 },
-                displayTags: ["娱乐之都", "房价洼地", "不夜城"],
-                desc: "你热爱生活，喜欢热闹和娱乐。长沙房价友好、夜生活丰富、美食多样，适合追求快乐生活、不想被房贷压垮的年轻人。",
-            },
-            {
-                name: "丽江",
-                tags: { sea: -1, chill: 10, lowHousePrice: 7, warm: 7, nature: 10, romantic: 10, edu: 2, medical: 3, slow: 10 },
-                displayTags: ["古城韵味", "艳遇之都", "慢时光"],
-                desc: "你向往诗和远方，渴望逃离都市的喧嚣。丽江的古城、雪山和慢节奏生活，是文艺青年和追求心灵自由者的理想之地。",
-            },
-            {
-                name: "三亚",
-                tags: { sea: 10, chill: 9, lowHousePrice: -5, warm: 10, nature: 9, tourism: 10, edu: 4, medical: 5, vacation: 10 },
-                displayTags: ["热带天堂", "度假胜地", "海滨生活"],
-                desc: "你热爱阳光、沙滩和大海，追求度假般的生活。三亚有中国最美的海滩和温暖的气候，适合喜欢水上运动、追求休闲生活的人。",
-            },
-            {
-                name: "青岛",
-                tags: { sea: 9, chill: 7, lowHousePrice: 4, warm: 6, beer: 10, nature: 8, edu: 7, medical: 7, european: 8 },
-                displayTags: ["红瓦绿树", "啤酒之城", "海滨风情"],
-                desc: "你喜欢有特色的海滨城市，享受啤酒、海鲜和欧式建筑。青岛气候宜人，生活节奏适中，适合喜欢海洋文化又希望有城市便利的你。",
-            },
-            {
-                name: "厦门",
-                tags: { sea: 9, chill: 8, lowHousePrice: -6, warm: 9, romantic: 10, clean: 10, edu: 8, medical: 7, island: 10 },
-                displayTags: ["海上花园", "文艺清新", "慢生活"],
-                desc: "你追求浪漫、精致的生活环境。厦门有美丽的海岸线、文艺的鼓浪屿和干净的城市环境，适合喜欢小资情调、注重生活品质的你。",
-            },
-            {
-                name: "苏州",
-                tags: { sea: -1, chill: 7, lowHousePrice: -2, warm: 7, garden: 10, manu: 9, edu: 8, medical: 7, culture: 9 },
-                displayTags: ["园林之城", "江南水乡", "工业强市"],
-                desc: "你欣赏古典美，又重视现代产业发展。苏州完美融合了古典园林和现代工业园区，既有文化底蕴又有经济活力，适合追求平衡发展的你。",
-            },
-            {
-                name: "南京",
-                tags: { sea: -1, chill: 6, lowHousePrice: -1, warm: 7, history: 9, edu: 10, medical: 9, culture: 9, stable: 8 },
-                displayTags: ["六朝古都", "教育重镇", "文化名城"],
-                desc: "你重视教育和文化，喜欢有历史底蕴的城市。南京高校云集，医疗资源优秀，生活节奏适中，适合重视子女教育和个人发展的家庭。",
-            },
-            {
-                name: "武汉",
-                tags: { sea: -1, chill: 5, lowHousePrice: 6, warm: 8, heavyFood: 9, river: 10, edu: 9, medical: 9, hub: 10 },
-                displayTags: ["江城", "过早之都", "九省通衢"],
-                desc: "你性格豪爽，喜欢大江大河的气势。武汉地理位置优越，医疗教育资源强大，生活成本适中，适合喜欢热闹、追求便利交通的你。",
-            },
-            {
-                name: "泉州",
-                tags: { sea: 1, chill: 7, lowHousePrice: 7, warm: 9, history: 9, business: 8, edu: 6, medical: 6, culture: 9 },
-                displayTags: ["海上丝绸之路", "闽南文化", "民营经济"],
-                desc: "你喜欢有独特文化底蕴的沿海城市。泉州是海上丝绸之路起点，闽南文化浓郁，民营经济活跃，适合喜欢历史文化又希望有商业机会的你。",
-            },
-            {
-                name: "香港",
-                tags: { sea: 1, chill: 2, lowHousePrice: -10, warm: 9, finance: 10, foreign: 10, edu: 10, medical: 10, hustle: 10 },
-                displayTags: ["国际都会", "购物天堂", "金融中心"],
-                desc: "你追求国际化、高效率的生活，能够承受高压力和高成本。香港是亚洲金融中心，中西文化交融，适合追求顶尖职业发展和国际视野的你。",
-            },
-            {
-                name: "台北",
-                tags: { sea: -1, chill: 7, lowHousePrice: -5, warm: 9, food: 10, culture: 9, edu: 9, medical: 9, friendly: 9 },
-                displayTags: ["美食之都", "文化多元", "人情味浓"],
-                desc: "你注重生活细节，喜欢多元文化和美食。台北以丰富的小吃、便捷的生活和浓厚的人情味著称，适合追求生活品质和文化体验的你。",
-            },
-            {
-                name: "扬州",
-                tags: { sea: -1, chill: 8, lowHousePrice: 6, warm: 7, garden: 9, food: 9, edu: 6, medical: 6, slow: 9 },
-                displayTags: ["淮扬菜", "园林城市", "慢生活"],
-                desc: "你喜欢精致、悠闲的生活方式。扬州以淮扬菜、古典园林和慢节奏生活闻名，适合追求生活情趣、喜欢江南文化的你。",
-            },
-            {
-                name: "哈尔滨",
-                tags: { sea: -1, chill: 6, lowHousePrice: 7, warm: 2, cold: 10, heavyFood: 9, edu: 8, medical: 8, european: 9 },
-                displayTags: ["冰城", "欧式风情", "豪爽热情"],
-                desc: "你喜欢鲜明的四季和异域风情，不怕寒冷。哈尔滨有独特的冰雪文化、俄式建筑和豪爽的民风，适合喜欢冬季运动和特色文化的你。",
-            },
-            {
-                name: "昆明",
-                tags: { sea: -1, chill: 9, lowHousePrice: 7, warm: 8, seasons: 10, nature: 9, edu: 7, medical: 7, flowers: 10 },
-                displayTags: ["春城", "鲜花之都", "气候宜人"],
-                desc: "你追求舒适的气候和自然环境。昆明四季如春，鲜花常开，生活节奏悠闲，适合厌倦极端天气、想要舒适生活的你。",
-            },
-            {
-                name: "威海",
-                tags: { sea: 10, chill: 9, lowHousePrice: 6, warm: 7, clean: 10, nature: 9, edu: 5, medical: 6, slow: 9 },
-                displayTags: ["最宜居", "干净城市", "海滨慢生活"],
-                desc: "你追求干净、安静的海滨生活。威海以洁净的环境、优美的海岸线和慢节奏生活闻名，适合喜欢海洋、追求宜居环境的你。",
-            },
-            {
-                name: "澳门",
-                tags: { sea: 1, chill: 6, lowHousePrice: -8, warm: 9, gaming: 10, portuguese: 10, edu: 7, medical: 8, blend: 10 },
-                displayTags: ["中西合璧", "娱乐之都", "文化遗产"],
-                desc: "你喜欢中西文化交融的独特氛围。澳门有丰富的葡萄牙文化遗产、繁华的娱乐业和独特的美食，适合喜欢多元文化、追求独特体验的你。",
-            },
-            {
-                name: "大连",
-                tags: { sea: 9, chill: 7, lowHousePrice: 5, warm: 6, clean: 9, japanese: 8, edu: 8, medical: 8, football: 9 },
-                displayTags: ["北方明珠", "足球之城", "海滨浪漫"],
-                desc: "你喜欢北方海滨城市的清爽和浪漫。大连气候宜人，城市干净，有浓厚的足球文化和日俄建筑遗产，适合喜欢海洋运动的北方人。",
-            },
-            {
-                name: "珠海",
-                tags: { sea: 10, chill: 9, lowHousePrice: -2, warm: 9, clean: 10, garden: 9, edu: 6, medical: 6, romantic: 9 },
-                displayTags: ["百岛之市", "宜居城市", "情侣路"],
-                desc: "你追求浪漫、干净的海滨生活环境。珠海以优美的海岸线、花园般的城市和悠闲的生活节奏著称，适合喜欢海洋、追求生活品质的你。",
-            },
-            {
-                name: "无锡",
-                tags: { sea: -1, chill: 7, lowHousePrice: 4, warm: 7, garden: 9, industry: 8, edu: 7, medical: 7, taihu: 10 },
-                displayTags: ["太湖明珠", "工业强市", "江南水乡"],
-                desc: "你喜欢江南水乡的韵味和现代工业的结合。无锡有美丽的太湖风光、发达的民营经济和适中的生活成本，适合追求平衡发展的江南爱好者。",
+                detail: {
+                    soul: "西安与你热爱历史、尊重传统的灵魂深度共鸣，这里是中华文明的源头之一。",
+                    life: "早晨一碗羊肉泡馍，白天参观博物馆和历史遗迹，晚上逛回民街吃美食，生活充实而有滋味。",
+                    culture: "十三朝古都，历史文化底蕴深厚，人们朴实豪爽，生活节奏适中，物价亲民。",
+                    highlight: "在西安，你可以与千年的历史对话，感受时间的重量。"
+                }
             },
         ];
 
         // ================= 3. 问卷配置 =================
         const questions = [
             {
-                title: "1/20 你的饮食偏好是？",
+                title: "你的饮食偏好是？",
                 options: [
                     { text: "无辣不欢，川湘渝菜系最爱", tags: { spicy: 10, food: 8 } },
                     { text: "喜欢面食和北方菜系", tags: { heavyFood: 10, food: 8 } },
@@ -862,7 +1093,7 @@
                 ],
             },
             {
-                title: "2/20 你对气候的偏好是？",
+                title: "你对气候的偏好是？",
                 options: [
                     { text: "喜欢温暖，讨厌冬天", tags: { warm: 10 } },
                     { text: "喜欢四季分明，享受季节变化", tags: { seasons: 10 } },
@@ -872,7 +1103,7 @@
                 ],
             },
             {
-                title: "3/20 你理想的城市景观是？",
+                title: "你理想的城市景观是？",
                 options: [
                     { text: "现代摩天大楼，都市感强", tags: { modern: 10, hustle: 6 } },
                     { text: "自然风光，山水湖海", tags: { nature: 10, chill: 6 } },
@@ -882,7 +1113,7 @@
                 ],
             },
             {
-                title: "4/20 你的期望薪资水平是？",
+                title: "你的期望薪资水平是？",
                 options: [
                     { text: "追求高薪，不怕加班", tags: { hustle: 10, highSalary: 10 } },
                     { text: "中等偏上，工作生活平衡", tags: { hustle: 5, chill: 6 } },
@@ -891,7 +1122,7 @@
                 ],
             },
             {
-                title: "5/20 你的职业方向是？",
+                title: "你的职业方向是？",
                 options: [
                     { text: "互联网/科技行业", tags: { tech: 10, hustle: 8 } },
                     { text: "体制内/公务员", tags: { gov: 10, stable: 10 } },
@@ -902,7 +1133,7 @@
                 ],
             },
             {
-                title: "6/20 你对房价的态度是？",
+                title: "你对房价的态度是？",
                 options: [
                     { text: "必须买房，愿意承受高房价", tags: { lowHousePrice: -10, stable: 8 } },
                     { text: "希望买房，但价格要合理", tags: { lowHousePrice: 5, stable: 6 } },
@@ -911,7 +1142,7 @@
                 ],
             },
             {
-                title: "7/20 你的业余爱好主要是？",
+                title: "你的业余爱好主要是？",
                 options: [
                     { text: "户外运动，爬山徒步", tags: { nature: 10, chill: 6 } },
                     { text: "文化艺术，看展演出", tags: { culture: 10, ent: 8 } },
@@ -921,7 +1152,7 @@
                 ],
             },
             {
-                title: "8/20 你的社交偏好是？",
+                title: "你的社交偏好是？",
                 options: [
                     { text: "喜欢社交，朋友越多越好", tags: { humanTouch: 10, ent: 8 } },
                     { text: "注重边界，需要个人空间", tags: { boundaries: 10, chill: 6 } },
@@ -930,7 +1161,7 @@
                 ],
             },
             {
-                title: "9/20 你对子女教育的重视程度？",
+                title: "你对子女教育的重视程度？",
                 options: [
                     { text: "非常重视，追求顶尖教育资源", tags: { edu: 10, stable: 8 } },
                     { text: "比较重视，希望有良好教育环境", tags: { edu: 7, stable: 6 } },
@@ -939,7 +1170,7 @@
                 ],
             },
             {
-                title: "10/20 你对医疗条件的要求是？",
+                title: "你对医疗条件的要求是？",
                 options: [
                     { text: "必须有一流医疗资源", tags: { medical: 10, stable: 8 } },
                     { text: "有良好医疗条件即可", tags: { medical: 7, stable: 6 } },
@@ -948,7 +1179,7 @@
                 ],
             },
             {
-                title: "11/20 你的人生追求主要是？",
+                title: "你的人生追求主要是？",
                 options: [
                     { text: "事业成功，实现自我价值", tags: { hustle: 10, highSalary: 8 } },
                     { text: "生活幸福，家庭和睦", tags: { stable: 10, chill: 8 } },
@@ -957,7 +1188,7 @@
                 ],
             },
             {
-                title: "12/20 你能接受的通勤时间是？",
+                title: "你能接受的通勤时间是？",
                 options: [
                     { text: "30分钟内，时间就是生命", tags: { efficiency: 10, hustle: 6 } },
                     { text: "1小时内，可以接受", tags: { pragmatic: 8, hustle: 4 } },
@@ -966,7 +1197,7 @@
                 ],
             },
             {
-                title: "13/20 你的周末通常如何安排？",
+                title: "你的周末通常如何安排？",
                 options: [
                     { text: "休息放松，恢复精力", tags: { chill: 10, slow: 8 } },
                     { text: "朋友聚会，社交活动", tags: { ent: 10, humanTouch: 8 } },
@@ -975,7 +1206,7 @@
                 ],
             },
             {
-                title: "14/20 你对城市规模的偏好是？",
+                title: "你对城市规模的偏好是？",
                 options: [
                     { text: "超大城市，资源丰富", tags: { hustle: 10, modern: 8 } },
                     { text: "一二线城市，平衡发展", tags: { stable: 8, hustle: 6 } },
@@ -984,7 +1215,7 @@
                 ],
             },
             {
-                title: "15/20 你的消费观念是？",
+                title: "你的消费观念是？",
                 options: [
                     { text: "注重品质，愿意为体验花钱", tags: { fashion: 10, hustle: 6 } },
                     { text: "理性消费，追求性价比", tags: { pragmatic: 10, stable: 6 } },
@@ -993,7 +1224,7 @@
                 ],
             },
             {
-                title: "16/20 你对夜生活的需求是？",
+                title: "你对夜生活的需求是？",
                 options: [
                     { text: "丰富多彩，越夜越精彩", tags: { nightLife: 10, ent: 8 } },
                     { text: "偶尔参与，适度放松", tags: { nightLife: 6, ent: 6 } },
@@ -1002,7 +1233,7 @@
                 ],
             },
             {
-                title: "17/20 你喜欢的居住区域是？",
+                title: "你喜欢的居住区域是？",
                 options: [
                     { text: "市中心，繁华便利", tags: { hustle: 8, modern: 8 } },
                     { text: "近郊区，安静舒适", tags: { chill: 8, nature: 6 } },
@@ -1011,7 +1242,7 @@
                 ],
             },
             {
-                title: "18/20 你的旅行偏好是？",
+                title: "你的旅行偏好是？",
                 options: [
                     { text: "国际旅行，体验异国文化", tags: { foreign: 10, culture: 8 } },
                     { text: "国内深度游，探索各地", tags: { nature: 8, culture: 8 } },
@@ -1020,7 +1251,7 @@
                 ],
             },
             {
-                title: "19/20 你对宠物/植物的态度是？",
+                title: "你对宠物/植物的态度是？",
                 options: [
                     { text: "养宠物，是家庭一员", tags: { chill: 8, humanTouch: 6 } },
                     { text: "喜欢植物，打造绿色空间", tags: { nature: 10, chill: 6 } },
@@ -1029,7 +1260,7 @@
                 ],
             },
             {
-                title: "20/20 你希望未来的生活状态是？",
+                title: "你希望未来的生活状态是？",
                 options: [
                     { text: "持续奋斗，不断突破", tags: { hustle: 10, highSalary: 8 } },
                     { text: "工作生活平衡，稳步前进", tags: { stable: 10, hustle: 5 } },
@@ -1047,9 +1278,7 @@
             renderQuestion(0);
             updateProgress();
             updateNavigation();
-            
-            // 更新访问计数器
-            updateVisitorCounter();
+            updateQuestionNumber();
         }
 
         function renderQuestion(index) {
@@ -1072,14 +1301,22 @@
                     <div class="checkmark"></div>
                 `;
                 
+                // 检查这个选项是否之前被选中过
+                if (selectionHistory[index] && selectionHistory[index][0] === opt.tags) {
+                    btn.classList.add('selected');
+                }
+                
                 btn.onclick = () => {
                     // 移除其他选项的选中状态
                     document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
                     // 选中当前选项
                     btn.classList.add('selected');
                     
+                    // 保存选择
                     selectionHistory[index] = [opt.tags];
-                    setTimeout(() => nextStep(), 300);
+                    
+                    // 启用下一题按钮
+                    document.getElementById("next-btn").disabled = false;
                 };
                 
                 optionsDiv.appendChild(btn);
@@ -1088,9 +1325,19 @@
             card.appendChild(optionsDiv);
             container.appendChild(card);
             updateNavigation();
+            updateQuestionNumber();
+            
+            // 检查是否需要启用下一题按钮
+            document.getElementById("next-btn").disabled = !selectionHistory[index];
         }
 
         function nextStep() {
+            // 确保当前题目已经选择
+            if (!selectionHistory[currentStep]) {
+                alert("请先选择一个选项");
+                return;
+            }
+            
             if (currentStep < questions.length - 1) {
                 currentStep++;
                 updateProgress();
@@ -1114,24 +1361,31 @@
             document.getElementById("progress").style.width = `${progress}%`;
         }
 
+        function updateQuestionNumber() {
+            document.getElementById("current-question").textContent = currentStep + 1;
+            document.getElementById("total-questions").textContent = `/20`;
+        }
+
         function updateNavigation() {
             const bar = document.getElementById("action-bar");
             const prevBtn = document.getElementById("prev-btn");
+            const nextBtn = document.getElementById("next-btn");
             
             bar.style.display = "flex";
             prevBtn.disabled = currentStep === 0;
+            
+            // 更新下一题按钮文字
+            if (currentStep === questions.length - 1) {
+                nextBtn.textContent = "完成测试 →";
+            } else {
+                nextBtn.textContent = "下一题 →";
+            }
         }
 
         // ================= 5. 验证页面逻辑 =================
         function showVerifyScreen() {
             document.getElementById("quiz-app").style.display = "none";
             document.getElementById("verify-screen").style.display = "flex";
-            
-            // 更新访问计数器
-            const verifyCounter = document.createElement("div");
-            verifyCounter.className = "visitor-counter";
-            verifyCounter.textContent = `你是第${visitorCount}位旅客`;
-            document.getElementById("verify-screen").appendChild(verifyCounter);
             
             // 添加回车键支持
             document.getElementById("verify-input").addEventListener("keypress", function (e) {
@@ -1180,39 +1434,6 @@
             return candidates;
         }
 
-        // ================= 7. 雷达图系统 =================
-        const DIMENSIONS = {
-            career: { label: "职业发展", tags: ["hustle", "tech", "finance", "business", "highSalary"] },
-            life: { label: "节奏舒缓", tags: ["chill", "slow", "humanTouch", "stable"] },
-            culture: { label: "文化开放", tags: ["culture", "foreign", "fashion", "ent", "nightLife"] },
-            nature: { label: "自然环境", tags: ["nature", "sea", "warm", "seasons", "clean"] },
-            cost: { label: "生活成本", tags: ["lowHousePrice", "pragmatic"] },
-            facility: { label: "城市配套", tags: ["edu", "medical", "modern", "efficiency"] },
-        };
-
-        function calculateSixDimensions(sourceData, isUser) {
-            const scores = [];
-            Object.keys(DIMENSIONS).forEach((dimKey) => {
-                const config = DIMENSIONS[dimKey];
-                let rawSum = 0;
-
-                config.tags.forEach((tag) => {
-                    const val = sourceData[tag] || 0;
-                    if (isUser) {
-                        if (val > 0) rawSum += val *0.8;
-                    } else {
-                        if (val > 0) rawSum += val * 3;
-                        if (val < 0) rawSum -= Math.abs(val) * 2;
-                    }
-                });
-
-                // 归一化到40-100
-                let finalScore = Math.min(100, Math.max(40, 40 + rawSum));
-                scores.push(finalScore);
-            });
-            return scores;
-        }
-
         function calculateUserScores() {
             let userScores = {};
             selectionHistory.forEach(
@@ -1225,92 +1446,12 @@
             return userScores;
         }
 
-        function renderRadar(city, userScores) {
-            if (typeof Chart === "undefined") return;
-            
-            const ctx = document.getElementById("radarChart");
-            if (window.myRadar) window.myRadar.destroy();
-
-            const labels = Object.values(DIMENSIONS).map((d) => d.label);
-            const userRadarValues = userScores ? calculateSixDimensions(userScores, true) : [60, 60, 60, 60, 60, 60];
-            const cityRadarValues = calculateSixDimensions(city.tags, false);
-
-            window.myRadar = new Chart(ctx, {
-                type: "radar",
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: city.name + "属性",
-                            data: cityRadarValues,
-                            backgroundColor: "rgba(200, 200, 200, 0.2)",
-                            borderColor: document.body.classList.contains('dark-mode') 
-                                ? "rgba(220, 220, 220, 0.8)" 
-                                : "rgba(150, 150, 150, 0.8)",
-                            borderWidth: 2,
-                            pointRadius: 0,
-                        },
-                        {
-                            label: "你的偏好",
-                            data: userRadarValues,
-                            borderColor: "#10b981", // 绿色主题
-                            backgroundColor: "rgba(16, 185, 129, 0.2)",
-                            borderWidth: 2,
-                            pointBackgroundColor: "#fff",
-                            pointBorderColor: "#10b981",
-                        },
-                    ],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { 
-                                color: document.body.classList.contains('dark-mode') 
-                                    ? "rgba(255, 255, 255, 0.1)" 
-                                    : "rgba(0, 0, 0, 0.1)" 
-                            },
-                            grid: { 
-                                color: document.body.classList.contains('dark-mode') 
-                                    ? "rgba(255, 255, 255, 0.1)" 
-                                    : "rgba(0, 0, 0, 0.1)" 
-                            },
-                            pointLabels: { 
-                                font: { size: 12, weight: "bold" }, 
-                                color: document.body.classList.contains('dark-mode') 
-                                    ? "#f1f5f9" 
-                                    : "#475569" 
-                            },
-                            ticks: { display: false },
-                            suggestedMin: 0,
-                            suggestedMax: 100,
-                        },
-                    },
-                    plugins: {
-                        legend: { 
-                            position: "bottom", 
-                            labels: { 
-                                boxWidth: 10,
-                                color: document.body.classList.contains('dark-mode') 
-                                    ? "#f1f5f9" 
-                                    : "#475569"
-                            } 
-                        },
-                    },
-                },
-            });
-        }
-
-        // ================= 8. 结果计算 =================
+        // ================= 7. 结果计算 =================
         function calculateResult() {
             document.getElementById("quiz-container").style.display = "none";
             document.getElementById("action-bar").style.display = "none";
             document.getElementById("loading").style.display = "block";
             
-            // 更新访问计数器
-            updateVisitorCounter();
-
             setTimeout(() => {
                 // 汇总用户得分
                 const userScores = calculateUserScores();
@@ -1326,16 +1467,27 @@
                 const winner = ranked[0];
                 document.getElementById("city-name").innerText = winner.name;
                 document.getElementById("city-tags").innerHTML = (winner.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
-                document.getElementById("city-desc").innerText = winner.desc;
+                
+                // 更新详细描述
+                if (winner.detail) {
+                    document.getElementById("soul-match").innerText = winner.detail.soul;
+                    document.getElementById("life-scene").innerText = winner.detail.life;
+                    document.getElementById("culture-scene").innerText = winner.detail.culture;
+                    document.getElementById("city-highlight").innerText = winner.detail.highlight;
+                } else {
+                    // 如果城市没有detail数据，使用默认描述
+                    document.getElementById("soul-match").innerText = "这座城市与你内心渴望的生活方式高度契合。无论是生活节奏、文化氛围还是自然环境，都呼应着你潜意识中的向往。";
+                    document.getElementById("life-scene").innerText = "清晨的市井烟火，午后的闲适时光，夜晚的万家灯火——在这里，每一天都像精心编排的诗篇，既有日常的温暖，也有远方的诗意。";
+                    document.getElementById("culture-scene").innerText = "这座城市的人们有着与你相似的生活态度和价值取向。在这里，你可以找到志同道合的伙伴，也能在陌生中感受到熟悉的温暖。";
+                    document.getElementById("city-highlight").innerText = "这是一座能够安放你灵魂的城市，在这里，你不是过客，而是归人。";
+                }
 
-                // 渲染雷达图
-                renderRadar(winner, userScores);
-
-                // 渲染备选城市
+                // 渲染备选城市 - 显示前3座匹配城市
                 const otherContainer = document.getElementById("second-options-container");
                 otherContainer.innerHTML = "";
 
-                ranked.slice(0, 4).forEach((c, idx) => {
+                // 显示前3座匹配城市
+                ranked.slice(0, 3).forEach((c, idx) => {
                     const el = document.createElement("div");
                     el.className = "city-link-btn";
                     if (idx === 0) el.classList.add("active");
@@ -1347,31 +1499,58 @@
 
                         document.getElementById("city-name").innerText = c.name;
                         document.getElementById("city-tags").innerHTML = (c.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
-                        document.getElementById("city-desc").innerText = c.desc;
-
-                        renderRadar(c, userScores);
+                        
+                        // 更新详细描述
+                        if (c.detail) {
+                            document.getElementById("soul-match").innerText = c.detail.soul;
+                            document.getElementById("life-scene").innerText = c.detail.life;
+                            document.getElementById("culture-scene").innerText = c.detail.culture;
+                            document.getElementById("city-highlight").innerText = c.detail.highlight;
+                        } else {
+                            // 如果城市没有detail数据，使用默认描述
+                            document.getElementById("soul-match").innerText = "这座城市与你内心渴望的生活方式高度契合。无论是生活节奏、文化氛围还是自然环境，都呼应着你潜意识中的向往。";
+                            document.getElementById("life-scene").innerText = "清晨的市井烟火，午后的闲适时光，夜晚的万家灯火——在这里，每一天都像精心编排的诗篇，既有日常的温暖，也有远方的诗意。";
+                            document.getElementById("culture-scene").innerText = "这座城市的人们有着与你相似的生活态度和价值取向。在这里，你可以找到志同道合的伙伴，也能在陌生中感受到熟悉的温暖。";
+                            document.getElementById("city-highlight").innerText = "这是一座能够安放你灵魂的城市，在这里，你不是过客，而是归人。";
+                        }
                     };
                     otherContainer.appendChild(el);
                 });
             }, 1500);
         }
 
-        // ================= 9. 结果页面功能 =================
+        // ================= 8. 结果页面功能 =================
         function saveResultAsImage() {
             const resultScreen = document.getElementById("result-screen");
             const buttons = document.querySelector('.result-actions');
+            const copyrightFooter = document.querySelector('.copyright-footer');
             
-            // 临时隐藏按钮
+            // 临时隐藏按钮和版权信息
             buttons.style.display = 'none';
+            copyrightFooter.style.display = 'none';
             
+            // 添加捕获标记类
+            document.body.classList.add('capturing');
+            
+            // 设置html2canvas选项，确保正确截图
             html2canvas(resultScreen, {
                 backgroundColor: document.body.classList.contains('dark-mode') ? '#0f172a' : '#f8fafc',
-                scale: 2,
+                scale: 1.5,
                 useCORS: true,
-                logging: false
+                logging: false,
+                allowTaint: true,
+                foreignObjectRendering: true,
+                width: resultScreen.offsetWidth,
+                height: resultScreen.scrollHeight,
+                x: resultScreen.offsetLeft,
+                y: resultScreen.offsetTop
             }).then(canvas => {
-                // 恢复按钮显示
+                // 恢复按钮和版权信息显示
                 buttons.style.display = 'flex';
+                copyrightFooter.style.display = 'block';
+                
+                // 移除捕获标记类
+                document.body.classList.remove('capturing');
                 
                 // 创建下载链接
                 const link = document.createElement('a');
@@ -1382,7 +1561,10 @@
                 // 显示成功提示
                 showNotification('结果已保存为图片！');
             }).catch(error => {
+                // 恢复按钮和版权信息显示
                 buttons.style.display = 'flex';
+                copyrightFooter.style.display = 'block';
+                document.body.classList.remove('capturing');
                 showNotification('保存失败，请重试');
                 console.error('保存图片失败:', error);
             });
@@ -1396,13 +1578,14 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: var(--primary);
+                background: var(--accent);
                 color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 14px 24px;
+                border-radius: 10px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.2);
                 z-index: 10000;
                 font-weight: 500;
+                font-family: 'Inter', sans-serif;
                 animation: fadeInOut 3s ease;
             `;
             
@@ -1440,27 +1623,32 @@
             currentStep = 0;
             selectionHistory = [];
             
-            // 切换回开始页面
+            // 隐藏结果页面
             document.getElementById("result-screen").style.display = "none";
+            
+            // 显示开始页面
             document.getElementById("start-screen").style.display = "flex";
             
-            // 更新访问计数器
+            // 重置session标记，允许重新计数
+            sessionCounted = false;
+            
+            // 增加访问计数
             updateVisitorCounter();
         }
 
-        // ================= 10. 初始化 =================
-        // 页面加载时更新访问计数器
+        // ================= 9. 初始化 =================
+        // 页面加载时显示访问计数器
         window.onload = function() {
+            // 从localStorage加载访问计数
+            visitorCount = localStorage.getItem('visitorCount') ? parseInt(localStorage.getItem('visitorCount')) : 0;
+            
+            // 页面加载时增加访问计数（只增加一次）
             updateVisitorCounter();
             
-            // 初始化开始页面的计数器
-            const startCounter = document.createElement("div");
-            startCounter.className = "visitor-counter";
-            startCounter.textContent = `你是第${visitorCount}位旅客`;
-            document.getElementById("start-screen").appendChild(startCounter);
+            createParticles();
         };
 
-        // ================= 11. 调试功能 =================
+        // ================= 10. 调试功能 =================
         // 为方便测试，可以快速跳转到结果页
         function devSkipToResult(cityName) {
             // 直接填充数据并跳转到结果页
@@ -1482,9 +1670,29 @@
             
             document.getElementById("city-name").innerText = city.name;
             document.getElementById("city-tags").innerHTML = (city.displayTags || []).map((t) => `<span class="result-tag">${t}</span>`).join("");
-            document.getElementById("city-desc").innerText = city.desc;
             
-            renderRadar(city, userScores);
+            // 更新详细描述
+            if (city.detail) {
+                document.getElementById("soul-match").innerText = city.detail.soul;
+                document.getElementById("life-scene").innerText = city.detail.life;
+                document.getElementById("culture-scene").innerText = city.detail.culture;
+                document.getElementById("city-highlight").innerText = city.detail.highlight;
+            }
+            
+            // 渲染备选城市（前3座）
+            const otherContainer = document.getElementById("second-options-container");
+            otherContainer.innerHTML = "";
+            
+            // 模拟排名前3的城市
+            const ranked = [city, cities[1], cities[2]];
+            ranked.forEach((c, idx) => {
+                c.displayScore = idx === 0 ? 98 : (90 - idx * 5);
+                const el = document.createElement("div");
+                el.className = "city-link-btn";
+                if (idx === 0) el.classList.add("active");
+                el.innerText = `${c.name} (${c.displayScore}%)`;
+                otherContainer.appendChild(el);
+            });
         }
 
         // 在控制台暴露调试函数
